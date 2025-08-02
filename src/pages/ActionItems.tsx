@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { AIWorkloadAnalysis } from '@/components/AIWorkloadAnalysis';
 import { AISmartFilters } from '@/components/AISmartFilters';
 import { AIActionSuggestions } from '@/components/AIActionSuggestions';
+import { ChatInterface } from '@/components/ChatInterface';
 import { 
   FileText, 
   Bug, 
@@ -196,6 +197,12 @@ const ActionItems = () => {
   const overdueItems = actionItems.filter(item => 
     item.dueDate && new Date(item.dueDate) < new Date()
   ).length;
+
+  const handleLayoutUpdate = (prompt: string) => {
+    console.log('Layout update requested:', prompt);
+    // Here you would implement the actual layout changes
+    // For now, we'll just log the prompt
+  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -429,6 +436,9 @@ const ActionItems = () => {
           </div>
         )}
       </div>
+
+      {/* Chat Interface */}
+      <ChatInterface onLayoutUpdate={handleLayoutUpdate} />
     </div>
   );
 };
