@@ -4,8 +4,9 @@ import { TaskCard } from '@/components/TaskCard';
 import { AIInsights } from '@/components/AIInsights';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Filter, CheckCircle, Clock, Target } from 'lucide-react';
+import { Brain, Filter, CheckCircle, Clock, Target, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 
 interface Task {
   id: string;
@@ -121,6 +122,16 @@ const Index = () => {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Experience intelligent task management with AI-powered insights, smart categorization, and natural language processing.
           </p>
+        </div>
+
+        {/* Navigation */}
+        <div className="mb-6 flex justify-center">
+          <Link to="/action-items">
+            <Button variant="outline" className="bg-white/50 hover:bg-white/70">
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View Action Items from External Sources
+            </Button>
+          </Link>
         </div>
 
         {/* Task Input */}

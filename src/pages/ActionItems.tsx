@@ -1,0 +1,347 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { 
+  FileText, 
+  Bug, 
+  CreditCard, 
+  ExternalLink, 
+  MessageSquare, 
+  Calendar,
+  AlertCircle,
+  CheckCircle2
+} from 'lucide-react';
+
+interface ActionItem {
+  id: string;
+  title: string;
+  source: 'google-docs' | 'jira' | 'concur';
+  type: string;
+  priority: 'high' | 'medium' | 'low';
+  dueDate?: string;
+  description: string;
+  actionRequired: string;
+  link: string;
+  assignedBy?: string;
+  created: string;
+}
+
+const ActionItems = () => {
+  // Mock data for demonstration
+  const actionItems: ActionItem[] = [
+    {
+      id: '1',
+      title: 'Review Q4 Budget Planning Document',
+      source: 'google-docs',
+      type: 'Comment',
+      priority: 'high',
+      dueDate: '2024-08-05',
+      description: 'Please review the Q4 budget allocations for the marketing department and provide feedback on the proposed increases.',
+      actionRequired: 'Review and comment',
+      link: 'https://docs.google.com/document/d/...',
+      assignedBy: 'Sarah Johnson',
+      created: '2024-08-01'
+    },
+    {
+      id: '2',
+      title: 'Fix authentication bug in user registration',
+      source: 'jira',
+      type: 'Bug',
+      priority: 'high',
+      dueDate: '2024-08-04',
+      description: 'Users are unable to register with email addresses containing special characters. This is blocking new user onboarding.',
+      actionRequired: 'Fix and test',
+      link: 'https://yourcompany.atlassian.net/browse/AUTH-123',
+      assignedBy: 'System',
+      created: '2024-07-30'
+    },
+    {
+      id: '3',
+      title: 'Approve expense report - Conference travel',
+      source: 'concur',
+      type: 'Expense Approval',
+      priority: 'medium',
+      dueDate: '2024-08-06',
+      description: 'Expense report for attendance at TechConf 2024 including flights, hotel, and meals totaling $2,847.50',
+      actionRequired: 'Approve or reject',
+      link: 'https://concur.company.com/expense/...',
+      assignedBy: 'Mike Chen',
+      created: '2024-08-01'
+    },
+    {
+      id: '4',
+      title: 'Marketing Strategy 2025 - Need input on digital channels',
+      source: 'google-docs',
+      type: 'Comment',
+      priority: 'medium',
+      description: 'Your expertise in digital marketing would be valuable for this section. Please add your thoughts on the proposed social media strategy.',
+      actionRequired: 'Provide input',
+      link: 'https://docs.google.com/document/d/...',
+      assignedBy: 'Lisa Wang',
+      created: '2024-07-29'
+    },
+    {
+      id: '5',
+      title: 'Implement user dashboard analytics',
+      source: 'jira',
+      type: 'Story',
+      priority: 'medium',
+      description: 'Create analytics dashboard showing user engagement metrics, page views, and conversion rates.',
+      actionRequired: 'Develop feature',
+      link: 'https://yourcompany.atlassian.net/browse/DASH-456',
+      assignedBy: 'Product Team',
+      created: '2024-07-28'
+    },
+    {
+      id: '6',
+      title: 'Approve team building event budget',
+      source: 'concur',
+      type: 'Budget Approval',
+      priority: 'low',
+      dueDate: '2024-08-10',
+      description: 'Requesting approval for quarterly team building event budget of $1,200 for team dinner and activities.',
+      actionRequired: 'Approve budget',
+      link: 'https://concur.company.com/request/...',
+      assignedBy: 'HR Department',
+      created: '2024-07-31'
+    }
+  ];
+
+  const getSourceIcon = (source: string) => {
+    switch (source) {
+      case 'google-docs': return <FileText className="w-4 h-4" />;
+      case 'jira': return <Bug className="w-4 h-4" />;
+      case 'concur': return <CreditCard className="w-4 h-4" />;
+      default: return <AlertCircle className="w-4 h-4" />;
+    }
+  };
+
+  const getSourceColor = (source: string) => {
+    switch (source) {
+      case 'google-docs': return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'jira': return 'bg-indigo-100 text-indigo-700 border-indigo-200';
+      case 'concur': return 'bg-green-100 text-green-700 border-green-200';
+      default: return 'bg-gray-100 text-gray-700 border-gray-200';
+    }
+  };
+
+  const getSourceName = (source: string) => {
+    switch (source) {
+      case 'google-docs': return 'Google Docs';
+      case 'jira': return 'Jira';
+      case 'concur': return 'Concur';
+      default: return source;
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'bg-gradient-to-r from-red-500 to-pink-500 text-white';
+      case 'medium': return 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white';
+      case 'low': return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white';
+      default: return 'bg-muted text-muted-foreground';
+    }
+  };
+
+  const groupedItems = actionItems.reduce((acc, item) => {
+    if (!acc[item.source]) acc[item.source] = [];
+    acc[item.source].push(item);
+    return acc;
+  }, {} as Record<string, ActionItem[]>);
+
+  const totalItems = actionItems.length;
+  const highPriorityItems = actionItems.filter(item => item.priority === 'high').length;
+  const overdueItems = actionItems.filter(item => 
+    item.dueDate && new Date(item.dueDate) < new Date()
+  ).length;
+
+  return (
+    <div className="min-h-screen bg-gradient-subtle">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent mb-2">
+            Action Items
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Tasks and approvals waiting for your attention across all platforms
+          </p>
+        </div>
+
+        {/* Summary Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-ai-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">{totalItems}</p>
+                <p className="text-sm text-muted-foreground">Total Items</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">{highPriorityItems}</p>
+                <p className="text-sm text-muted-foreground">High Priority</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">{overdueItems}</p>
+                <p className="text-sm text-muted-foreground">Overdue</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-foreground">{Object.keys(groupedItems).length}</p>
+                <p className="text-sm text-muted-foreground">Sources</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Action Items by Source */}
+        <div className="space-y-8">
+          {Object.entries(groupedItems).map(([source, items]) => (
+            <div key={source}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-2">
+                  {getSourceIcon(source)}
+                  <h2 className="text-2xl font-semibold text-foreground">
+                    {getSourceName(source)}
+                  </h2>
+                </div>
+                <Badge className={getSourceColor(source)}>
+                  {items.length} item{items.length !== 1 ? 's' : ''}
+                </Badge>
+              </div>
+              
+              <div className="grid gap-4">
+                {items.map((item) => (
+                  <Card 
+                    key={item.id}
+                    className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass hover:shadow-elevated transition-spring hover:scale-[1.01]"
+                  >
+                    <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                      <div className="flex-1 space-y-4">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
+                          <Badge className={getPriorityColor(item.priority)}>
+                            {item.priority}
+                          </Badge>
+                          {item.dueDate && (
+                            <Badge variant="outline" className="border-ai-accent/30 text-ai-accent">
+                              <Calendar className="w-3 h-3 mr-1" />
+                              Due {new Date(item.dueDate).toLocaleDateString()}
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        <p className="text-muted-foreground leading-relaxed">
+                          {item.description}
+                        </p>
+                        
+                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <MessageSquare className="w-4 h-4" />
+                            {item.type}
+                          </div>
+                          {item.assignedBy && (
+                            <div>
+                              Assigned by: <span className="font-medium">{item.assignedBy}</span>
+                            </div>
+                          )}
+                          <div>
+                            Created: {new Date(item.created).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Separator orientation="vertical" className="hidden lg:block h-24" />
+                      
+                      <div className="lg:w-48 space-y-3">
+                        <div className="text-sm">
+                          <p className="font-medium text-foreground mb-1">Action Required:</p>
+                          <p className="text-muted-foreground">{item.actionRequired}</p>
+                        </div>
+                        
+                        <div className="flex flex-col gap-2">
+                          <Button 
+                            size="sm" 
+                            className="bg-gradient-ai hover:opacity-90 w-full"
+                            onClick={() => window.open(item.link, '_blank')}
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Open in {getSourceName(item.source)}
+                          </Button>
+                          
+                          {item.source === 'concur' && (
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" className="flex-1">
+                                Approve
+                              </Button>
+                              <Button variant="outline" size="sm" className="flex-1">
+                                Reject
+                              </Button>
+                            </div>
+                          )}
+                          
+                          {item.source === 'jira' && (
+                            <Button variant="outline" size="sm" className="w-full">
+                              Start Work
+                            </Button>
+                          )}
+                          
+                          {item.source === 'google-docs' && (
+                            <Button variant="outline" size="sm" className="w-full">
+                              Add Comment
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {totalItems === 0 && (
+          <div className="text-center py-12">
+            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-ai/10 flex items-center justify-center">
+              <CheckCircle2 className="w-10 h-10 text-ai-primary" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">All caught up!</h3>
+            <p className="text-muted-foreground">
+              No action items waiting for your attention right now.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ActionItems;
