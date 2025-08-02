@@ -39,7 +39,7 @@ interface ScheduledItem {
   startTime: Date;
   endTime: Date;
   priority: 'high' | 'medium' | 'low';
-  source: 'google-docs' | 'jira' | 'concur';
+  source: 'google-docs' | 'jira' | 'concur' | 'interviewing';
   estimatedTime: string;
 }
 
@@ -47,7 +47,7 @@ interface ActionItem {
   id: string;
   title: string;
   priority: 'high' | 'medium' | 'low';
-  source: 'google-docs' | 'jira' | 'concur';
+  source: 'google-docs' | 'jira' | 'concur' | 'interviewing';
   estimatedTime?: string;
 }
 
@@ -152,6 +152,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
       case 'google-docs': return '📄';
       case 'jira': return '🔧';
       case 'concur': return '💳';
+      case 'interviewing': return '👥';
       default: return '📋';
     }
   };

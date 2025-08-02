@@ -20,13 +20,14 @@ import {
   CheckCircle2,
   Brain,
   Zap,
-  Clock
+  Clock,
+  Users
 } from 'lucide-react';
 
 interface ActionItem {
   id: string;
   title: string;
-  source: 'google-docs' | 'jira' | 'concur';
+  source: 'google-docs' | 'jira' | 'concur' | 'interviewing';
   type: string;
   priority: 'high' | 'medium' | 'low';
   dueDate?: string;
@@ -150,6 +151,42 @@ const ActionItems = () => {
       sentiment: 'friendly',
       aiSuggestion: 'Within quarterly budget allocation',
       dependencies: []
+    },
+    {
+      id: '7',
+      title: 'Submit Interview Feedback - Senior Developer Position',
+      source: 'interviewing',
+      type: 'Interview Feedback',
+      priority: 'high',
+      dueDate: '2024-08-02', // 6 hours SLA
+      description: 'Provide detailed feedback for John Smith\'s technical interview for Senior Developer role. Include assessment of coding skills, problem-solving approach, and cultural fit.',
+      actionRequired: 'Submit feedback',
+      link: 'https://hr.company.com/interview-feedback/...',
+      assignedBy: 'HR Department',
+      created: '2024-08-02',
+      aiScore: 88,
+      estimatedTime: '20 min',
+      sentiment: 'neutral',
+      aiSuggestion: 'Focus on technical competency and team collaboration aspects',
+      dependencies: ['Interview Completion']
+    },
+    {
+      id: '8',
+      title: 'Respond to Panel Interview Invitation - Product Manager Role',
+      source: 'interviewing',
+      type: 'Interview Invitation',
+      priority: 'medium',
+      dueDate: '2024-08-03', // 24 hours SLA
+      description: 'Accept or decline invitation to participate as a panel interviewer for Product Manager position. Interview scheduled for August 8th, 2:00-3:30 PM.',
+      actionRequired: 'Accept or decline',
+      link: 'https://hr.company.com/interview-invite/...',
+      assignedBy: 'Sarah Johnson',
+      created: '2024-08-02',
+      aiScore: 65,
+      estimatedTime: '2 min',
+      sentiment: 'friendly',
+      aiSuggestion: 'Check calendar availability for Aug 8th afternoon',
+      dependencies: []
     }
   ];
 
@@ -158,6 +195,7 @@ const ActionItems = () => {
       case 'google-docs': return <FileText className="w-4 h-4" />;
       case 'jira': return <Bug className="w-4 h-4" />;
       case 'concur': return <CreditCard className="w-4 h-4" />;
+      case 'interviewing': return <Users className="w-4 h-4" />;
       default: return <AlertCircle className="w-4 h-4" />;
     }
   };
@@ -167,6 +205,7 @@ const ActionItems = () => {
       case 'google-docs': return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'jira': return 'bg-indigo-100 text-indigo-700 border-indigo-200';
       case 'concur': return 'bg-green-100 text-green-700 border-green-200';
+      case 'interviewing': return 'bg-purple-100 text-purple-700 border-purple-200';
       default: return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
@@ -176,6 +215,7 @@ const ActionItems = () => {
       case 'google-docs': return 'Google Docs';
       case 'jira': return 'Jira';
       case 'concur': return 'Concur';
+      case 'interviewing': return 'HR Portal';
       default: return source;
     }
   };
@@ -417,6 +457,26 @@ const ActionItems = () => {
                             <Button variant="outline" size="sm" className="w-full">
                               Add Comment
                             </Button>
+                          )}
+
+                          {item.source === 'interviewing' && (
+                            <div className="space-y-2">
+                              {item.type === 'Interview Feedback' && (
+                                <Button variant="outline" size="sm" className="w-full">
+                                  Submit Feedback
+                                </Button>
+                              )}
+                              {item.type === 'Interview Invitation' && (
+                                <div className="flex gap-2">
+                                  <Button variant="outline" size="sm" className="flex-1">
+                                    Accept
+                                  </Button>
+                                  <Button variant="outline" size="sm" className="flex-1">
+                                    Decline
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
                           )}
 
                           <Button 
