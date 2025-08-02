@@ -216,8 +216,8 @@ const Index = () => {
   const getSourceName = (source: string) => {
     switch (source) {
       case 'google-docs': return 'Google Docs';
-      case 'jira': return 'Jira';
-      case 'concur': return 'Concur';
+      case 'jira': return 'SLA Tasks';
+      case 'concur': return 'Approvals';
       case 'interviewing': return 'Recruiting';
       default: return source;
     }
@@ -296,10 +296,10 @@ const Index = () => {
               </SelectTrigger>
               <SelectContent className="bg-background border-white/20">
                 <SelectItem value="all">All Sources</SelectItem>
-                <SelectItem value="google-docs">Google Docs</SelectItem>
-                <SelectItem value="jira">Jira</SelectItem>
-                <SelectItem value="concur">Concur</SelectItem>
+                <SelectItem value="concur">Approvals</SelectItem>
                 <SelectItem value="interviewing">Recruiting</SelectItem>
+                <SelectItem value="google-docs">Google Docs</SelectItem>
+                <SelectItem value="jira">SLA Tasks</SelectItem>
               </SelectContent>
             </Select>
           </div>
