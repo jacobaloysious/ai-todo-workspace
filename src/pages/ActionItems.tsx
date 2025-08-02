@@ -2,6 +2,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { AIWorkloadAnalysis } from '@/components/AIWorkloadAnalysis';
+import { AISmartFilters } from '@/components/AISmartFilters';
+import { AIActionSuggestions } from '@/components/AIActionSuggestions';
 import { 
   FileText, 
   Bug, 
@@ -10,7 +13,10 @@ import {
   MessageSquare, 
   Calendar,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Brain,
+  Zap,
+  Clock
 } from 'lucide-react';
 
 interface ActionItem {
@@ -25,10 +31,15 @@ interface ActionItem {
   link: string;
   assignedBy?: string;
   created: string;
+  aiScore?: number;
+  estimatedTime?: string;
+  sentiment?: 'urgent' | 'neutral' | 'friendly';
+  aiSuggestion?: string;
+  dependencies?: string[];
 }
 
 const ActionItems = () => {
-  // Mock data for demonstration
+  // Mock data for demonstration with AI enhancements
   const actionItems: ActionItem[] = [
     {
       id: '1',
@@ -41,7 +52,12 @@ const ActionItems = () => {
       actionRequired: 'Review and comment',
       link: 'https://docs.google.com/document/d/...',
       assignedBy: 'Sarah Johnson',
-      created: '2024-08-01'
+      created: '2024-08-01',
+      aiScore: 95,
+      estimatedTime: '45 min',
+      sentiment: 'neutral',
+      aiSuggestion: 'Focus on marketing ROI metrics in sections 3-4',
+      dependencies: ['Q3 Performance Review']
     },
     {
       id: '2',
@@ -54,7 +70,12 @@ const ActionItems = () => {
       actionRequired: 'Fix and test',
       link: 'https://yourcompany.atlassian.net/browse/AUTH-123',
       assignedBy: 'System',
-      created: '2024-07-30'
+      created: '2024-07-30',
+      aiScore: 92,
+      estimatedTime: '3 hours',
+      sentiment: 'urgent',
+      aiSuggestion: 'Similar issue resolved in AUTH-98, check validation regex',
+      dependencies: ['User Registration Service']
     },
     {
       id: '3',
@@ -67,7 +88,12 @@ const ActionItems = () => {
       actionRequired: 'Approve or reject',
       link: 'https://concur.company.com/expense/...',
       assignedBy: 'Mike Chen',
-      created: '2024-08-01'
+      created: '2024-08-01',
+      aiScore: 78,
+      estimatedTime: '5 min',
+      sentiment: 'friendly',
+      aiSuggestion: 'All receipts attached, within policy limits',
+      dependencies: []
     },
     {
       id: '4',
@@ -79,7 +105,12 @@ const ActionItems = () => {
       actionRequired: 'Provide input',
       link: 'https://docs.google.com/document/d/...',
       assignedBy: 'Lisa Wang',
-      created: '2024-07-29'
+      created: '2024-07-29',
+      aiScore: 85,
+      estimatedTime: '30 min',
+      sentiment: 'friendly',
+      aiSuggestion: 'Consider TikTok and LinkedIn strategy gaps',
+      dependencies: ['Q4 Budget Document']
     },
     {
       id: '5',
@@ -91,7 +122,12 @@ const ActionItems = () => {
       actionRequired: 'Develop feature',
       link: 'https://yourcompany.atlassian.net/browse/DASH-456',
       assignedBy: 'Product Team',
-      created: '2024-07-28'
+      created: '2024-07-28',
+      aiScore: 72,
+      estimatedTime: '8 hours',
+      sentiment: 'neutral',
+      aiSuggestion: 'Break into smaller tasks: metrics API, UI components',
+      dependencies: ['Authentication System', 'Database Schema']
     },
     {
       id: '6',
@@ -104,7 +140,12 @@ const ActionItems = () => {
       actionRequired: 'Approve budget',
       link: 'https://concur.company.com/request/...',
       assignedBy: 'HR Department',
-      created: '2024-07-31'
+      created: '2024-07-31',
+      aiScore: 45,
+      estimatedTime: '2 min',
+      sentiment: 'friendly',
+      aiSuggestion: 'Within quarterly budget allocation',
+      dependencies: []
     }
   ];
 
@@ -167,6 +208,16 @@ const ActionItems = () => {
           <p className="text-lg text-muted-foreground">
             Tasks and approvals waiting for your attention across all platforms
           </p>
+        </div>
+
+        {/* AI Features Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <AIWorkloadAnalysis />
+          <AISmartFilters />
+        </div>
+
+        <div className="mb-8">
+          <AIActionSuggestions />
         </div>
 
         {/* Summary Stats */}
@@ -249,6 +300,18 @@ const ActionItems = () => {
                           <Badge className={getPriorityColor(item.priority)}>
                             {item.priority}
                           </Badge>
+                          {item.aiScore && (
+                            <Badge variant="outline" className="border-ai-primary/30 text-ai-primary">
+                              <Brain className="w-3 h-3 mr-1" />
+                              AI Score: {item.aiScore}
+                            </Badge>
+                          )}
+                          {item.estimatedTime && (
+                            <Badge variant="outline" className="border-muted text-muted-foreground">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {item.estimatedTime}
+                            </Badge>
+                          )}
                           {item.dueDate && (
                             <Badge variant="outline" className="border-ai-accent/30 text-ai-accent">
                               <Calendar className="w-3 h-3 mr-1" />
@@ -260,6 +323,18 @@ const ActionItems = () => {
                         <p className="text-muted-foreground leading-relaxed">
                           {item.description}
                         </p>
+                        
+                        {item.aiSuggestion && (
+                          <div className="p-3 rounded-lg bg-gradient-ai/5 border border-ai-primary/20">
+                            <div className="flex items-start gap-2">
+                              <Zap className="w-4 h-4 text-ai-primary mt-0.5" />
+                              <div>
+                                <p className="text-sm font-medium text-ai-primary">AI Insight</p>
+                                <p className="text-sm text-muted-foreground">{item.aiSuggestion}</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                         
                         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
@@ -274,6 +349,20 @@ const ActionItems = () => {
                           <div>
                             Created: {new Date(item.created).toLocaleDateString()}
                           </div>
+                          {item.sentiment && (
+                            <div className="flex items-center gap-1">
+                              <div className={`w-2 h-2 rounded-full ${
+                                item.sentiment === 'urgent' ? 'bg-red-500' :
+                                item.sentiment === 'friendly' ? 'bg-green-500' : 'bg-gray-500'
+                              }`} />
+                              <span className="capitalize">{item.sentiment} tone</span>
+                            </div>
+                          )}
+                          {item.dependencies && item.dependencies.length > 0 && (
+                            <div>
+                              Dependencies: <span className="font-medium">{item.dependencies.join(', ')}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       
