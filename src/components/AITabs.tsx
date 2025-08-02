@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AIWorkloadAnalysis } from './AIWorkloadAnalysis';
-import { AISmartFilters } from './AISmartFilters';
-import { AIActionSuggestions } from './AIActionSuggestions';
+import { AIWorkloadAnalysisContent } from './AIWorkloadAnalysisContent';
+import { AISmartFiltersContent } from './AISmartFiltersContent';
+import { AIActionSuggestionsContent } from './AIActionSuggestionsContent';
 import { 
   Brain, 
   Sparkles, 
@@ -38,13 +38,29 @@ export const AITabs = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'workload':
-        return <AIWorkloadAnalysis />;
+        return (
+          <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+            <AIWorkloadAnalysisContent />
+          </Card>
+        );
       case 'filters':
-        return <AISmartFilters />;
+        return (
+          <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+            <AISmartFiltersContent />
+          </Card>
+        );
       case 'suggestions':
-        return <AIActionSuggestions />;
+        return (
+          <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+            <AIActionSuggestionsContent />
+          </Card>
+        );
       default:
-        return <AIWorkloadAnalysis />;
+        return (
+          <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+            <AIWorkloadAnalysisContent />
+          </Card>
+        );
     }
   };
 
