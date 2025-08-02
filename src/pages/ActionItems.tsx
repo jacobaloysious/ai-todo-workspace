@@ -234,15 +234,6 @@ const ActionItems = () => {
           <AIActionSuggestions />
         </div>
 
-        {/* Calendar Widget */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-foreground mb-4">Schedule & Calendar</h2>
-          <CalendarWidget 
-            actionItems={actionItems}
-            onScheduleItem={handleScheduleItem}
-          />
-        </div>
-
         {/* Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
@@ -294,9 +285,11 @@ const ActionItems = () => {
           </Card>
         </div>
 
-        {/* Action Items by Source */}
-        <div className="space-y-8">
-          {Object.entries(groupedItems).map(([source, items]) => (
+        {/* Main Content: Action Items + Calendar */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          {/* Action Items - Left Side (2/3 width) */}
+          <div className="xl:col-span-2 space-y-8">
+            {Object.entries(groupedItems).map(([source, items]) => (
             <div key={source}>
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center gap-2">
@@ -450,6 +443,18 @@ const ActionItems = () => {
               </div>
             </div>
           ))}
+          </div>
+
+          {/* Calendar Widget - Right Side (1/3 width) */}
+          <div className="xl:col-span-1">
+            <div className="sticky top-4">
+              <h2 className="text-2xl font-semibold text-foreground mb-4">Schedule & Calendar</h2>
+              <CalendarWidget 
+                actionItems={actionItems}
+                onScheduleItem={handleScheduleItem}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Empty State */}
