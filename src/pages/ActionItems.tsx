@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { AIWorkloadAnalysis } from '@/components/AIWorkloadAnalysis';
 import { AISmartFilters } from '@/components/AISmartFilters';
 import { AIActionSuggestions } from '@/components/AIActionSuggestions';
+import { AITabs } from '@/components/AITabs';
 import { ChatInterface } from '@/components/ChatInterface';
 import { CalendarWidget } from '@/components/CalendarWidget';
 import { 
@@ -225,13 +226,8 @@ const ActionItems = () => {
         </div>
 
         {/* AI Features Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <AIWorkloadAnalysis />
-          <AISmartFilters />
-        </div>
-
         <div className="mb-8">
-          <AIActionSuggestions />
+          <AITabs />
         </div>
 
         {/* Summary Stats */}
