@@ -49,42 +49,7 @@ const Index = () => {
   const [selectedSource, setSelectedSource] = useState<string>('all');
   // Mock data for demonstration with AI enhancements
   const actionItems: ActionItem[] = [
-    {
-      id: '1',
-      title: 'Review Q4 Budget Planning Document',
-      source: 'google-docs',
-      type: 'Comment',
-      priority: 'high',
-      dueDate: '2024-08-05',
-      description: 'Please review the Q4 budget allocations for the marketing department and provide feedback on the proposed increases.',
-      actionRequired: 'Review and comment',
-      link: 'https://docs.google.com/document/d/...',
-      assignedBy: 'Sarah Johnson',
-      created: '2024-08-01',
-      aiScore: 95,
-      estimatedTime: '45 min',
-      sentiment: 'neutral',
-      aiSuggestion: 'Focus on marketing ROI metrics in sections 3-4',
-      dependencies: ['Q3 Performance Review']
-    },
-    {
-      id: '2',
-      title: 'Fix authentication bug in user registration',
-      source: 'jira',
-      type: 'Bug',
-      priority: 'high',
-      dueDate: '2024-08-04',
-      description: 'Users are unable to register with email addresses containing special characters. This is blocking new user onboarding.',
-      actionRequired: 'Fix and test',
-      link: 'https://yourcompany.atlassian.net/browse/AUTH-123',
-      assignedBy: 'System',
-      created: '2024-07-30',
-      aiScore: 92,
-      estimatedTime: '3 hours',
-      sentiment: 'urgent',
-      aiSuggestion: 'Similar issue resolved in AUTH-98, check validation regex',
-      dependencies: ['User Registration Service']
-    },
+    // Approvals (Concur) items first
     {
       id: '3',
       title: 'Approve expense report - Conference travel',
@@ -104,40 +69,6 @@ const Index = () => {
       dependencies: []
     },
     {
-      id: '4',
-      title: 'Marketing Strategy 2025 - Need input on digital channels',
-      source: 'google-docs',
-      type: 'Comment',
-      priority: 'medium',
-      description: 'Your expertise in digital marketing would be valuable for this section. Please add your thoughts on the proposed social media strategy.',
-      actionRequired: 'Provide input',
-      link: 'https://docs.google.com/document/d/...',
-      assignedBy: 'Lisa Wang',
-      created: '2024-07-29',
-      aiScore: 85,
-      estimatedTime: '30 min',
-      sentiment: 'friendly',
-      aiSuggestion: 'Consider TikTok and LinkedIn strategy gaps',
-      dependencies: ['Q4 Budget Document']
-    },
-    {
-      id: '5',
-      title: 'Implement user dashboard analytics',
-      source: 'jira',
-      type: 'Story',
-      priority: 'medium',
-      description: 'Create analytics dashboard showing user engagement metrics, page views, and conversion rates.',
-      actionRequired: 'Develop feature',
-      link: 'https://yourcompany.atlassian.net/browse/DASH-456',
-      assignedBy: 'Product Team',
-      created: '2024-07-28',
-      aiScore: 72,
-      estimatedTime: '8 hours',
-      sentiment: 'neutral',
-      aiSuggestion: 'Break into smaller tasks: metrics API, UI components',
-      dependencies: ['Authentication System', 'Database Schema']
-    },
-    {
       id: '6',
       title: 'Approve team building event budget',
       source: 'concur',
@@ -155,6 +86,7 @@ const Index = () => {
       aiSuggestion: 'Within quarterly budget allocation',
       dependencies: []
     },
+    // Recruiting items second
     {
       id: '7',
       title: 'Submit Interview Feedback - Senior Developer Position',
@@ -190,6 +122,78 @@ const Index = () => {
       sentiment: 'friendly',
       aiSuggestion: 'Check calendar availability for Aug 8th afternoon',
       dependencies: []
+    },
+    // Google Docs items third
+    {
+      id: '1',
+      title: 'Review Q4 Budget Planning Document',
+      source: 'google-docs',
+      type: 'Comment',
+      priority: 'high',
+      dueDate: '2024-08-05',
+      description: 'Please review the Q4 budget allocations for the marketing department and provide feedback on the proposed increases.',
+      actionRequired: 'Review and comment',
+      link: 'https://docs.google.com/document/d/...',
+      assignedBy: 'Sarah Johnson',
+      created: '2024-08-01',
+      aiScore: 95,
+      estimatedTime: '45 min',
+      sentiment: 'neutral',
+      aiSuggestion: 'Focus on marketing ROI metrics in sections 3-4',
+      dependencies: ['Q3 Performance Review']
+    },
+    {
+      id: '4',
+      title: 'Marketing Strategy 2025 - Need input on digital channels',
+      source: 'google-docs',
+      type: 'Comment',
+      priority: 'medium',
+      description: 'Your expertise in digital marketing would be valuable for this section. Please add your thoughts on the proposed social media strategy.',
+      actionRequired: 'Provide input',
+      link: 'https://docs.google.com/document/d/...',
+      assignedBy: 'Lisa Wang',
+      created: '2024-07-29',
+      aiScore: 85,
+      estimatedTime: '30 min',
+      sentiment: 'friendly',
+      aiSuggestion: 'Consider TikTok and LinkedIn strategy gaps',
+      dependencies: ['Q4 Budget Document']
+    },
+    // SLA Tasks (Jira) items fourth
+    {
+      id: '2',
+      title: 'Fix authentication bug in user registration',
+      source: 'jira',
+      type: 'Bug',
+      priority: 'high',
+      dueDate: '2024-08-04',
+      description: 'Users are unable to register with email addresses containing special characters. This is blocking new user onboarding.',
+      actionRequired: 'Fix and test',
+      link: 'https://yourcompany.atlassian.net/browse/AUTH-123',
+      assignedBy: 'System',
+      created: '2024-07-30',
+      aiScore: 92,
+      estimatedTime: '3 hours',
+      sentiment: 'urgent',
+      aiSuggestion: 'Similar issue resolved in AUTH-98, check validation regex',
+      dependencies: ['User Registration Service']
+    },
+    {
+      id: '5',
+      title: 'Implement user dashboard analytics',
+      source: 'jira',
+      type: 'Story',
+      priority: 'medium',
+      description: 'Create analytics dashboard showing user engagement metrics, page views, and conversion rates.',
+      actionRequired: 'Develop feature',
+      link: 'https://yourcompany.atlassian.net/browse/DASH-456',
+      assignedBy: 'Product Team',
+      created: '2024-07-28',
+      aiScore: 72,
+      estimatedTime: '8 hours',
+      sentiment: 'neutral',
+      aiSuggestion: 'Break into smaller tasks: metrics API, UI components',
+      dependencies: ['Authentication System', 'Database Schema']
     }
   ];
 
