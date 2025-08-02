@@ -157,16 +157,16 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-6">{/* Changed from grid to vertical stacking */}
       {/* Calendar */}
-      <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-foreground">Schedule Calendar</h3>
+      <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+          <h3 className="text-base font-semibold text-foreground">Calendar</h3>
           <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="bg-gradient-ai hover:opacity-90">
-                <Plus className="w-4 h-4 mr-2" />
-                Schedule Task
+              <Button size="sm" className="bg-gradient-ai hover:opacity-90 text-xs">
+                <Plus className="w-3 h-3 mr-1" />
+                Schedule
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
@@ -275,27 +275,27 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
       </Card>
 
       {/* Scheduled Items for Selected Date */}
-      <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-        <div className="flex items-center gap-2 mb-4">
-          <CalendarIcon className="w-5 h-5 text-ai-primary" />
-          <h3 className="text-lg font-semibold text-foreground">
-            {format(selectedDate, 'MMMM d, yyyy')}
+      <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+        <div className="flex items-center gap-2 mb-3">
+          <CalendarIcon className="w-4 h-4 text-ai-primary" />
+          <h3 className="text-base font-semibold text-foreground">
+            {format(selectedDate, 'MMM d')}
           </h3>
         </div>
 
-        <ScrollArea className="h-[400px]">
+        <ScrollArea className="h-[300px]">
           <div className="space-y-3">
             {getScheduledItemsForDate(selectedDate).length === 0 ? (
-              <div className="text-center py-8">
-                <Clock className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-                <p className="text-muted-foreground">No scheduled items for this date</p>
+              <div className="text-center py-6">
+                <Clock className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                <p className="text-sm text-muted-foreground mb-2">No scheduled items</p>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="mt-2"
+                  className="text-xs"
                   onClick={() => setIsScheduleDialogOpen(true)}
                 >
-                  Schedule a task
+                  Schedule task
                 </Button>
               </div>
             ) : (
@@ -304,33 +304,35 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
                 .map((item) => (
                   <div
                     key={item.id}
-                    className={`p-4 rounded-lg border-l-4 ${getPriorityColor(item.priority)} relative group`}
+                    className={`p-3 rounded-lg border-l-4 ${getPriorityColor(item.priority)} relative group`}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-lg">{getSourceIcon(item.source)}</span>
-                          <h4 className="font-medium text-foreground text-sm">{item.title}</h4>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-sm">{getSourceIcon(item.source)}</span>
+                          <h4 className="font-medium text-foreground text-xs truncate">{item.title}</h4>
                         </div>
                         
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex flex-col gap-1 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {format(item.startTime, 'h:mm a')} - {format(item.endTime, 'h:mm a')}
                           </div>
-                          <Badge variant="outline" className="text-xs">
-                            {item.estimatedTime}
-                          </Badge>
-                          <Badge 
-                            variant="outline" 
-                            className={`text-xs ${
-                              item.priority === 'high' ? 'border-red-200 text-red-700' :
-                              item.priority === 'medium' ? 'border-yellow-200 text-yellow-700' :
-                              'border-green-200 text-green-700'
-                            }`}
-                          >
-                            {item.priority}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {item.estimatedTime}
+                            </Badge>
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs ${
+                                item.priority === 'high' ? 'border-red-200 text-red-700' :
+                                item.priority === 'medium' ? 'border-yellow-200 text-yellow-700' :
+                                'border-green-200 text-green-700'
+                              }`}
+                            >
+                              {item.priority}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
                       

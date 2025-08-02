@@ -448,7 +448,7 @@ const ActionItems = () => {
           {/* Calendar Widget - Right Side (1/3 width) */}
           <div className="xl:col-span-1">
             <div className="sticky top-4">
-              <h2 className="text-2xl font-semibold text-foreground mb-4">Schedule & Calendar</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-4">Schedule & Calendar</h2>
               <CalendarWidget 
                 actionItems={actionItems}
                 onScheduleItem={handleScheduleItem}
