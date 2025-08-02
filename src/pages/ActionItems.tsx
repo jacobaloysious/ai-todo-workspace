@@ -215,7 +215,7 @@ const ActionItems = () => {
       case 'google-docs': return 'Google Docs';
       case 'jira': return 'Jira';
       case 'concur': return 'Concur';
-      case 'interviewing': return 'HR Portal';
+      case 'interviewing': return 'Recruiting';
       default: return source;
     }
   };
