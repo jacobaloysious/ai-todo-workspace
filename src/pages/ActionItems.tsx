@@ -203,7 +203,7 @@ const ActionItems = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent mb-2">
-            Action Items
+            AI Workspace
           </h1>
           <p className="text-lg text-muted-foreground">
             Tasks and approvals waiting for your attention across all platforms
