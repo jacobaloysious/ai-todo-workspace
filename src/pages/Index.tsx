@@ -276,10 +276,10 @@ const Index = () => {
           <div className="flex items-center gap-2">
             <Brain className="w-6 h-6 text-ai-primary" />
             <h1 className="text-3xl font-bold bg-gradient-ai bg-clip-text text-transparent">
-              AI Todo
+              AI ToDos
             </h1>
           </div>
-          <p className="text-lg font-medium text-muted-foreground flex-1 sm:text-right">
+          <p className="text-lg font-medium text-muted-foreground flex-1">
             Experience intelligent task management with AI-powered insights, smart categorization, and natural language processing.
           </p>
         </div>
