@@ -394,7 +394,7 @@ const Index = () => {
                     key={item.id}
                     className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass hover:shadow-elevated transition-spring hover:scale-[1.01]"
                   >
-                    <div className="flex flex-col lg:flex-row lg:items-start gap-3">
+                    <div className="flex flex-col lg:flex-row lg:items-start gap-4">
                       <div className="flex-1 space-y-3">
                         <div className="flex flex-wrap items-center gap-1">
                           <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
@@ -448,25 +448,71 @@ const Index = () => {
                           </div>
                         )}
                         
-                        <div className="flex items-center justify-between pt-3 border-t border-border">
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <span>By {item.assignedBy}</span>
-                            <span>•</span>
-                            <span>{new Date(item.created).toLocaleDateString()}</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => window.open(item.link, '_blank')}
-                              className="bg-white/50 hover:bg-white/70"
-                            >
-                              <ExternalLink className="w-4 h-4 mr-2" />
-                              {item.actionRequired}
-                            </Button>
-                          </div>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground pt-2 border-t border-border">
+                          <span>By {item.assignedBy}</span>
+                          <span>•</span>
+                          <span>{new Date(item.created).toLocaleDateString()}</span>
                         </div>
+                      </div>
+
+                      {/* Action Required Section */}
+                      <div className="lg:w-64 space-y-3">
+                        <div>
+                          <p className="text-sm font-medium text-foreground mb-2">Action Required:</p>
+                          <p className="text-xs text-muted-foreground mb-3">{item.actionRequired}</p>
+                        </div>
+                        
+                        <Button 
+                          size="sm" 
+                          onClick={() => window.open(item.link, '_blank')}
+                          className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
+                        >
+                          <ExternalLink className="w-3 h-3 mr-2" />
+                          Open in {getSourceName(item.source)}
+                        </Button>
+                        
+                        <div className="flex gap-2">
+                          {item.source === 'concur' && (
+                            <>
+                              <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                Approve
+                              </Button>
+                              <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                Reject
+                              </Button>
+                            </>
+                          )}
+                          {item.source === 'interviewing' && item.type === 'Interview Feedback' && (
+                            <Button size="sm" variant="outline" className="flex-1 text-xs">
+                              Submit Feedback
+                            </Button>
+                          )}
+                          {item.source === 'interviewing' && item.type === 'Interview Invitation' && (
+                            <>
+                              <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                Accept
+                              </Button>
+                              <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                Decline
+                              </Button>
+                            </>
+                          )}
+                          {item.source === 'google-docs' && (
+                            <Button size="sm" variant="outline" className="flex-1 text-xs">
+                              Add Comment
+                            </Button>
+                          )}
+                          {item.source === 'jira' && (
+                            <Button size="sm" variant="outline" className="flex-1 text-xs">
+                              Update Status
+                            </Button>
+                          )}
+                        </div>
+                        
+                        <Button size="sm" variant="ghost" className="w-full text-xs">
+                          <Calendar className="w-3 h-3 mr-2" />
+                          Schedule
+                        </Button>
                       </div>
                     </div>
                   </Card>
