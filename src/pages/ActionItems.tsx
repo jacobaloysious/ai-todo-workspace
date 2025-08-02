@@ -1,7 +1,9 @@
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AIWorkloadAnalysis } from '@/components/AIWorkloadAnalysis';
 import { AISmartFilters } from '@/components/AISmartFilters';
 import { AIActionSuggestions } from '@/components/AIActionSuggestions';
@@ -44,6 +46,7 @@ interface ActionItem {
 }
 
 const ActionItems = () => {
+  const [selectedSource, setSelectedSource] = useState<string>('all');
   // Mock data for demonstration with AI enhancements
   const actionItems: ActionItem[] = [
     {
@@ -235,9 +238,18 @@ const ActionItems = () => {
     return acc;
   }, {} as Record<string, ActionItem[]>);
 
-  const totalItems = actionItems.length;
-  const highPriorityItems = actionItems.filter(item => item.priority === 'high').length;
-  const overdueItems = actionItems.filter(item => 
+  // Filter based on selected source
+  const filteredGroupedItems = selectedSource === 'all' 
+    ? groupedItems 
+    : { [selectedSource]: groupedItems[selectedSource] || [] };
+
+  const filteredActionItems = selectedSource === 'all' 
+    ? actionItems 
+    : actionItems.filter(item => item.source === selectedSource);
+
+  const totalItems = filteredActionItems.length;
+  const highPriorityItems = filteredActionItems.filter(item => item.priority === 'high').length;
+  const overdueItems = filteredActionItems.filter(item => 
     item.dueDate && new Date(item.dueDate) < new Date()
   ).length;
 
@@ -271,61 +283,92 @@ const ActionItems = () => {
         </div>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-ai-primary" />
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
+            <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-ai-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{totalItems}</p>
+                  <p className="text-sm text-muted-foreground">Total Items</p>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{totalItems}</p>
-                <p className="text-sm text-muted-foreground">Total Items</p>
+            </Card>
+            
+            <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{highPriorityItems}</p>
+                  <p className="text-sm text-muted-foreground">High Priority</p>
+                </div>
               </div>
-            </div>
-          </Card>
-          
-          <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-red-600" />
+            </Card>
+            
+            <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{overdueItems}</p>
+                  <p className="text-sm text-muted-foreground">Overdue</p>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{highPriorityItems}</p>
-                <p className="text-sm text-muted-foreground">High Priority</p>
+            </Card>
+            
+            <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{Object.keys(filteredGroupedItems).length}</p>
+                  <p className="text-sm text-muted-foreground">Sources</p>
+                </div>
               </div>
-            </div>
-          </Card>
-          
-          <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-orange-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{overdueItems}</p>
-                <p className="text-sm text-muted-foreground">Overdue</p>
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <CheckCircle2 className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-foreground">{Object.keys(groupedItems).length}</p>
-                <p className="text-sm text-muted-foreground">Sources</p>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
+
+          {/* Source Filter */}
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium text-foreground whitespace-nowrap">Filter by:</label>
+            <Select value={selectedSource} onValueChange={setSelectedSource}>
+              <SelectTrigger className="w-[180px] bg-background/50 border-white/20">
+                <SelectValue placeholder="All Sources" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border-white/20">
+                <SelectItem value="all">All Sources</SelectItem>
+                <SelectItem value="google-docs">Google Docs</SelectItem>
+                <SelectItem value="jira">Jira</SelectItem>
+                <SelectItem value="concur">Concur</SelectItem>
+                <SelectItem value="interviewing">Recruiting</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
         </div>
 
         {/* Main Content: Action Items + Calendar */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           {/* Action Items - Left Side (2/3 width) */}
           <div className="xl:col-span-2 space-y-8">
-            {Object.entries(groupedItems).map(([source, items]) => (
+            {Object.entries(filteredGroupedItems).length === 0 ? (
+              <Card className="p-8 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted/20 flex items-center justify-center">
+                  <AlertCircle className="w-10 h-10 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">No items found</h3>
+                <p className="text-muted-foreground">
+                  No action items found for the selected filter.
+                </p>
+              </Card>
+            ) : (
+              Object.entries(filteredGroupedItems).map(([source, items]) => (
             <div key={source}>
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center gap-2">
@@ -498,7 +541,8 @@ const ActionItems = () => {
                 ))}
               </div>
             </div>
-          ))}
+              ))
+            )}
           </div>
 
           {/* Calendar Widget - Right Side (1/3 width) */}
@@ -506,7 +550,7 @@ const ActionItems = () => {
             <div className="sticky top-4">
               <h2 className="text-xl font-semibold text-foreground mb-4">Schedule & Calendar</h2>
               <CalendarWidget 
-                actionItems={actionItems}
+                actionItems={filteredActionItems}
                 onScheduleItem={handleScheduleItem}
               />
             </div>
