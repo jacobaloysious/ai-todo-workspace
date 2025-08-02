@@ -266,32 +266,32 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Brain className="w-8 h-8 text-ai-primary" />
-            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent">
+      <div className="container mx-auto px-4 py-4">
+        {/* Header */}
+        <div className="text-center mb-4">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Brain className="w-6 h-6 text-ai-primary" />
+            <h1 className="text-3xl font-bold bg-gradient-ai bg-clip-text text-transparent">
               AI Todo
             </h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
             Experience intelligent task management with AI-powered insights, smart categorization, and natural language processing.
           </p>
         </div>
 
         {/* AI Features Section */}
-        <div className="mb-8">
+        <div className="mb-4">
           <AITabs />
         </div>
 
         {/* Summary Stats */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
           {/* Source Filter */}
-          <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-foreground whitespace-nowrap">Filter by:</label>
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-medium text-foreground whitespace-nowrap">Filter by:</label>
             <Select value={selectedSource} onValueChange={setSelectedSource}>
-              <SelectTrigger className="w-[180px] bg-background/50 border-white/20">
+              <SelectTrigger className="w-[160px] h-8 bg-background/50 border-white/20">
                 <SelectValue placeholder="All Sources" />
               </SelectTrigger>
               <SelectContent className="bg-background border-white/20">
@@ -304,51 +304,51 @@ const Index = () => {
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
-            <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
-                  <AlertCircle className="w-5 h-5 text-ai-primary" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
+            <Card className="p-3 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-ai/10 flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 text-ai-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{totalItems}</p>
-                  <p className="text-sm text-muted-foreground">Total Items</p>
+                  <p className="text-xl font-bold text-foreground">{totalItems}</p>
+                  <p className="text-xs text-muted-foreground">Total Items</p>
                 </div>
               </div>
             </Card>
             
-            <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                  <AlertCircle className="w-5 h-5 text-red-600" />
+            <Card className="p-3 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 text-red-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{highPriorityItems}</p>
-                  <p className="text-sm text-muted-foreground">High Priority</p>
+                  <p className="text-xl font-bold text-foreground">{highPriorityItems}</p>
+                  <p className="text-xs text-muted-foreground">High Priority</p>
                 </div>
               </div>
             </Card>
             
-            <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-orange-600" />
+            <Card className="p-3 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+                  <Calendar className="w-4 h-4 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{overdueItems}</p>
-                  <p className="text-sm text-muted-foreground">Overdue</p>
+                  <p className="text-xl font-bold text-foreground">{overdueItems}</p>
+                  <p className="text-xs text-muted-foreground">Overdue</p>
                 </div>
               </div>
             </Card>
             
-            <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+            <Card className="p-3 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{Object.keys(filteredGroupedItems).length}</p>
-                  <p className="text-sm text-muted-foreground">Sources</p>
+                  <p className="text-xl font-bold text-foreground">{Object.keys(filteredGroupedItems).length}</p>
+                  <p className="text-xs text-muted-foreground">Sources</p>
                 </div>
               </div>
             </Card>
@@ -356,26 +356,26 @@ const Index = () => {
         </div>
 
         {/* Main Content: Action Items + Calendar */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Action Items - Left Side (2/3 width) */}
-          <div className="xl:col-span-2 space-y-8">
+          <div className="xl:col-span-2 space-y-4">
             {Object.entries(filteredGroupedItems).length === 0 ? (
-              <Card className="p-8 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted/20 flex items-center justify-center">
-                  <AlertCircle className="w-10 h-10 text-muted-foreground" />
+              <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
+                <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/20 flex items-center justify-center">
+                  <AlertCircle className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">No items found</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-lg font-semibold text-foreground mb-1">No items found</h3>
+                <p className="text-sm text-muted-foreground">
                   No action items found for the selected filter.
                 </p>
               </Card>
             ) : (
               Object.entries(filteredGroupedItems).map(([source, items]) => (
             <div key={source}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-1">
                   {getSourceIcon(source)}
-                  <h2 className="text-2xl font-semibold text-foreground">
+                  <h2 className="text-xl font-semibold text-foreground">
                     {getSourceName(source)}
                   </h2>
                 </div>
@@ -384,16 +384,16 @@ const Index = () => {
                 </Badge>
               </div>
               
-              <div className="grid gap-4">
+              <div className="grid gap-3">
                 {items.map((item) => (
                   <Card 
                     key={item.id}
-                    className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass hover:shadow-elevated transition-spring hover:scale-[1.01]"
+                    className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass hover:shadow-elevated transition-spring hover:scale-[1.01]"
                   >
-                    <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-                      <div className="flex-1 space-y-4">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
+                    <div className="flex flex-col lg:flex-row lg:items-start gap-3">
+                      <div className="flex-1 space-y-3">
+                        <div className="flex flex-wrap items-center gap-1">
+                          <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
                           <Badge className={getPriorityColor(item.priority)}>
                             {item.priority}
                           </Badge>
@@ -417,17 +417,17 @@ const Index = () => {
                           )}
                         </div>
                         
-                        <p className="text-muted-foreground leading-relaxed">
+                        <p className="text-sm text-muted-foreground leading-relaxed">
                           {item.description}
                         </p>
                         
                         {item.aiSuggestion && (
-                          <div className="p-3 rounded-lg bg-gradient-ai/5 border border-ai-primary/20">
-                            <div className="flex items-start gap-2">
-                              <Zap className="w-4 h-4 text-ai-primary mt-0.5 flex-shrink-0" />
+                          <div className="p-2 rounded-lg bg-gradient-ai/5 border border-ai-primary/20">
+                            <div className="flex items-start gap-1">
+                              <Zap className="w-3 h-3 text-ai-primary mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-sm font-medium text-ai-primary mb-1">AI Suggestion</p>
-                                <p className="text-sm text-muted-foreground">{item.aiSuggestion}</p>
+                                <p className="text-xs font-medium text-ai-primary mb-0.5">AI Suggestion</p>
+                                <p className="text-xs text-muted-foreground">{item.aiSuggestion}</p>
                               </div>
                             </div>
                           </div>
@@ -444,8 +444,8 @@ const Index = () => {
                           </div>
                         )}
                         
-                        <div className="flex items-center justify-between pt-4 border-t border-border">
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center justify-between pt-3 border-t border-border">
+                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
                             <span>By {item.assignedBy}</span>
                             <span>•</span>
                             <span>{new Date(item.created).toLocaleDateString()}</span>
