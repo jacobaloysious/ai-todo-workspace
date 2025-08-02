@@ -279,7 +279,7 @@ const Index = () => {
               AI Todo
             </h1>
           </div>
-          <p className="text-sm text-muted-foreground max-w-md">
+          <p className="text-lg font-medium text-muted-foreground flex-1 sm:text-right">
             Experience intelligent task management with AI-powered insights, smart categorization, and natural language processing.
           </p>
         </div>
