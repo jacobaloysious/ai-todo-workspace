@@ -1,13 +1,17 @@
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
   Lightbulb, 
   MessageSquare, 
   CheckCircle2, 
   Clock,
   Users,
-  ArrowRight
+  ArrowRight,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 interface ActionSuggestion {
@@ -21,6 +25,7 @@ interface ActionSuggestion {
 }
 
 export const AIActionSuggestions = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const suggestions: ActionSuggestion[] = [
     {
       id: '1',
@@ -82,54 +87,69 @@ export const AIActionSuggestions = () => {
 
   return (
     <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
-          <Lightbulb className="w-5 h-5 text-ai-primary" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-foreground">AI Action Suggestions</h3>
-          <p className="text-sm text-muted-foreground">Smart recommendations to optimize your workflow</p>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {suggestions.map((suggestion) => {
-          const IconComponent = getIcon(suggestion.type);
-          return (
-            <div key={suggestion.id} className="p-4 rounded-lg border border-muted bg-muted/30">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-ai/10 flex items-center justify-center mt-1">
-                  <IconComponent className="w-4 h-4 text-ai-primary" />
-                </div>
-                
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-medium text-foreground">{suggestion.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">{suggestion.description}</p>
-                    </div>
-                    <Badge className={getTypeColor(suggestion.type)}>
-                      {suggestion.type}
-                    </Badge>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span>Confidence: {suggestion.confidence}%</span>
-                      <span>Saves: {suggestion.estimatedTimeSaved}</span>
-                    </div>
-                    
-                    <Button size="sm" className="bg-gradient-ai hover:opacity-90">
-                      {suggestion.actionText}
-                      <ArrowRight className="w-3 h-3 ml-1" />
-                    </Button>
-                  </div>
-                </div>
+      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+        <CollapsibleTrigger asChild>
+          <div className="flex items-center justify-between cursor-pointer">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
+                <Lightbulb className="w-5 h-5 text-ai-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">AI Action Suggestions</h3>
+                <p className="text-sm text-muted-foreground">Smart recommendations to optimize your workflow</p>
               </div>
             </div>
-          );
-        })}
-      </div>
+            <Button variant="ghost" size="sm" className="p-2">
+              {isExpanded ? (
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              )}
+            </Button>
+          </div>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          <div className="space-y-4 mt-4">
+            {suggestions.map((suggestion) => {
+              const IconComponent = getIcon(suggestion.type);
+              return (
+                <div key={suggestion.id} className="p-4 rounded-lg border border-muted bg-muted/30">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-ai/10 flex items-center justify-center mt-1">
+                      <IconComponent className="w-4 h-4 text-ai-primary" />
+                    </div>
+                    
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium text-foreground">{suggestion.title}</h4>
+                          <p className="text-sm text-muted-foreground mt-1">{suggestion.description}</p>
+                        </div>
+                        <Badge className={getTypeColor(suggestion.type)}>
+                          {suggestion.type}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>Confidence: {suggestion.confidence}%</span>
+                          <span>Saves: {suggestion.estimatedTimeSaved}</span>
+                        </div>
+                        
+                        <Button size="sm" className="bg-gradient-ai hover:opacity-90">
+                          {suggestion.actionText}
+                          <ArrowRight className="w-3 h-3 ml-1" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
     </Card>
   );
 };
