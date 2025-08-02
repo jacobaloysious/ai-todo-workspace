@@ -6,6 +6,7 @@ import { AIWorkloadAnalysis } from '@/components/AIWorkloadAnalysis';
 import { AISmartFilters } from '@/components/AISmartFilters';
 import { AIActionSuggestions } from '@/components/AIActionSuggestions';
 import { ChatInterface } from '@/components/ChatInterface';
+import { CalendarWidget } from '@/components/CalendarWidget';
 import { 
   FileText, 
   Bug, 
@@ -204,6 +205,11 @@ const ActionItems = () => {
     // For now, we'll just log the prompt
   };
 
+  const handleScheduleItem = (scheduleData: any) => {
+    console.log('Item scheduled:', scheduleData);
+    // Here you would implement the actual scheduling logic
+  };
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <div className="container mx-auto px-4 py-8">
@@ -225,6 +231,15 @@ const ActionItems = () => {
 
         <div className="mb-8">
           <AIActionSuggestions />
+        </div>
+
+        {/* Calendar Widget */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-foreground mb-4">Schedule & Calendar</h2>
+          <CalendarWidget 
+            actionItems={actionItems}
+            onScheduleItem={handleScheduleItem}
+          />
         </div>
 
         {/* Summary Stats */}
@@ -413,6 +428,19 @@ const ActionItems = () => {
                               Add Comment
                             </Button>
                           )}
+
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full"
+                            onClick={() => {
+                              // This would trigger the calendar widget scheduling
+                              console.log('Schedule item:', item.id);
+                            }}
+                          >
+                            <Calendar className="w-4 h-4 mr-2" />
+                            Schedule
+                          </Button>
                         </div>
                       </div>
                     </div>
