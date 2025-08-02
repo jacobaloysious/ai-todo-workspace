@@ -1,16 +1,21 @@
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
   Sparkles, 
   Zap, 
   Trophy, 
   Clock, 
   AlertCircle,
-  TrendingUp
+  TrendingUp,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 export const AISmartFilters = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const smartFilters = [
     {
       id: 'quick-wins',
@@ -56,45 +61,60 @@ export const AISmartFilters = () => {
 
   return (
     <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
-          <Sparkles className="w-5 h-5 text-ai-primary" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-foreground">AI Smart Filters</h3>
-          <p className="text-sm text-muted-foreground">Intelligent task categorization</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {smartFilters.map((filter) => {
-          const IconComponent = filter.icon;
-          return (
-            <Button
-              key={filter.id}
-              variant="outline"
-              className="h-auto p-4 justify-start text-left hover:scale-[1.02] transition-transform"
-            >
-              <div className="flex items-start gap-3 w-full">
-                <div className={`w-8 h-8 rounded-lg ${filter.color} flex items-center justify-center text-white`}>
-                  <IconComponent className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-foreground text-sm">{filter.name}</span>
-                    <Badge variant="secondary" className="text-xs">
-                      {filter.count}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {filter.description}
-                  </p>
-                </div>
+      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+        <CollapsibleTrigger asChild>
+          <div className="flex items-center justify-between cursor-pointer">
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" className="p-2">
+                {isExpanded ? (
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                )}
+              </Button>
+              <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-ai-primary" />
               </div>
-            </Button>
-          );
-        })}
-      </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">AI Smart Filters</h3>
+                <p className="text-sm text-muted-foreground">Intelligent task categorization</p>
+              </div>
+            </div>
+          </div>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
+            {smartFilters.map((filter) => {
+              const IconComponent = filter.icon;
+              return (
+                <Button
+                  key={filter.id}
+                  variant="outline"
+                  className="h-auto p-4 justify-start text-left hover:scale-[1.02] transition-transform"
+                >
+                  <div className="flex items-start gap-3 w-full">
+                    <div className={`w-8 h-8 rounded-lg ${filter.color} flex items-center justify-center text-white`}>
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-foreground text-sm">{filter.name}</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {filter.count}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {filter.description}
+                      </p>
+                    </div>
+                  </div>
+                </Button>
+              );
+            })}
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
     </Card>
   );
 };

@@ -91,6 +91,13 @@ export const AIActionSuggestions = () => {
         <CollapsibleTrigger asChild>
           <div className="flex items-center justify-between cursor-pointer">
             <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" className="p-2">
+                {isExpanded ? (
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                )}
+              </Button>
               <div className="w-10 h-10 rounded-full bg-gradient-ai/10 flex items-center justify-center">
                 <Lightbulb className="w-5 h-5 text-ai-primary" />
               </div>
@@ -99,13 +106,6 @@ export const AIActionSuggestions = () => {
                 <p className="text-sm text-muted-foreground">Smart recommendations to optimize your workflow</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm" className="p-2">
-              {isExpanded ? (
-                <ChevronUp className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              )}
-            </Button>
           </div>
         </CollapsibleTrigger>
 
