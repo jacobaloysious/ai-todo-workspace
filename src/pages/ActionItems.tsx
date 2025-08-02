@@ -284,6 +284,23 @@ const ActionItems = () => {
 
         {/* Summary Stats */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          {/* Source Filter */}
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium text-foreground whitespace-nowrap">Filter by:</label>
+            <Select value={selectedSource} onValueChange={setSelectedSource}>
+              <SelectTrigger className="w-[180px] bg-background/50 border-white/20">
+                <SelectValue placeholder="All Sources" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border-white/20">
+                <SelectItem value="all">All Sources</SelectItem>
+                <SelectItem value="google-docs">Google Docs</SelectItem>
+                <SelectItem value="jira">Jira</SelectItem>
+                <SelectItem value="concur">Concur</SelectItem>
+                <SelectItem value="interviewing">Recruiting</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
             <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
               <div className="flex items-center gap-3">
@@ -333,24 +350,6 @@ const ActionItems = () => {
               </div>
             </Card>
           </div>
-
-          {/* Source Filter */}
-          <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-foreground whitespace-nowrap">Filter by:</label>
-            <Select value={selectedSource} onValueChange={setSelectedSource}>
-              <SelectTrigger className="w-[180px] bg-background/50 border-white/20">
-                <SelectValue placeholder="All Sources" />
-              </SelectTrigger>
-              <SelectContent className="bg-background border-white/20">
-                <SelectItem value="all">All Sources</SelectItem>
-                <SelectItem value="google-docs">Google Docs</SelectItem>
-                <SelectItem value="jira">Jira</SelectItem>
-                <SelectItem value="concur">Concur</SelectItem>
-                <SelectItem value="interviewing">Recruiting</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
         </div>
 
         {/* Main Content: Action Items + Calendar */}
