@@ -14,6 +14,7 @@ import {
   ExternalLink, 
   MessageSquare, 
   Calendar,
+  CalendarIcon,
   AlertCircle,
   CheckCircle2,
   Brain,
@@ -438,7 +439,7 @@ const ActionItems = () => {
                               console.log('Schedule item:', item.id);
                             }}
                           >
-                            <Calendar className="w-4 h-4 mr-2" />
+                            <CalendarIcon className="w-4 h-4 mr-2" />
                             Schedule
                           </Button>
                         </div>
