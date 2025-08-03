@@ -276,7 +276,7 @@ const Index = () => {
       aiScore: 65,
       estimatedTime: '2 min',
       sentiment: 'friendly',
-      aiSuggestion: 'Check calendar availability for Aug 8th afternoon',
+      aiSuggestion: 'Historically you have accepted during this slot, your calendar is available as of today morning and no urgent items on your calendar for day',
       dependencies: []
     },
     // Google Docs items third
