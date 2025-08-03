@@ -28,7 +28,8 @@ import {
   Brain,
   Zap,
   Clock,
-  Users
+  Users,
+  X
 } from 'lucide-react';
 
 interface ActionItem {
@@ -56,6 +57,7 @@ const Index = () => {
   const [localTodos, setLocalTodos] = useState<ManualTodo[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [dismissedItems, setDismissedItems] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   // Load local todos from localStorage
@@ -390,7 +392,10 @@ const Index = () => {
     }
   };
 
-  const groupedItems = actionItems.reduce((acc, item) => {
+  // Filter out dismissed items
+  const visibleActionItems = actionItems.filter(item => !dismissedItems.has(item.id));
+
+  const groupedItems = visibleActionItems.reduce((acc, item) => {
     if (!acc[item.source]) acc[item.source] = [];
     acc[item.source].push(item);
     return acc;
@@ -402,8 +407,8 @@ const Index = () => {
     : { [selectedSource]: groupedItems[selectedSource] || [] };
 
   const filteredActionItems = selectedSource === 'all' 
-    ? actionItems 
-    : actionItems.filter(item => item.source === selectedSource);
+    ? visibleActionItems 
+    : visibleActionItems.filter(item => item.source === selectedSource);
 
   const totalItems = filteredActionItems.length;
   const highPriorityItems = filteredActionItems.filter(item => item.priority === 'high').length;
@@ -420,6 +425,14 @@ const Index = () => {
   const handleScheduleItem = (scheduleData: any) => {
     console.log('Item scheduled:', scheduleData);
     // Here you would implement the actual scheduling logic
+  };
+
+  const handleDismissItem = (itemId: string) => {
+    setDismissedItems(prev => new Set([...prev, itemId]));
+    toast({
+      title: "Task dismissed",
+      description: "The task has been removed from your view"
+    });
   };
 
   // Todo functions supporting both guest and authenticated modes
@@ -823,9 +836,19 @@ const Index = () => {
 
                           {/* Action Required Section */}
                           <div className="lg:w-64 space-y-3">
-                            <div>
-                              <p className="text-sm font-medium text-foreground mb-2">Action Required:</p>
-                              <p className="text-xs text-muted-foreground mb-3">{item.actionRequired}</p>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-sm font-medium text-foreground mb-2">Action Required:</p>
+                                <p className="text-xs text-muted-foreground mb-3">{item.actionRequired}</p>
+                              </div>
+                              <Button 
+                                size="sm" 
+                                variant="ghost"
+                                onClick={() => handleDismissItem(item.id)}
+                                className="h-8 w-8 p-0 hover:bg-muted/50"
+                              >
+                                <X className="w-4 h-4 text-muted-foreground" />
+                              </Button>
                             </div>
                             
                             <Button 
@@ -875,10 +898,21 @@ const Index = () => {
                               )}
                             </div>
                             
-                            <Button size="sm" variant="ghost" className="w-full text-xs">
-                              <Calendar className="w-3 h-3 mr-2" />
-                              Schedule
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="ghost" className="flex-1 text-xs">
+                                <Calendar className="w-3 h-3 mr-2" />
+                                Schedule
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                onClick={() => handleDismissItem(item.id)}
+                                className="flex-1 text-xs text-muted-foreground hover:text-foreground"
+                              >
+                                <X className="w-3 h-3 mr-2" />
+                                Dismiss
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </Card>
