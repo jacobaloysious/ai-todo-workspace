@@ -314,10 +314,6 @@ const Index = () => {
           </p>
         </div>
 
-        {/* AI Features Section */}
-        <div className="mb-4">
-          <AITabs />
-        </div>
 
         {/* Summary Stats */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
@@ -590,12 +586,15 @@ const Index = () => {
             </Tabs>
           </div>
 
-          {/* Calendar Widget - Right Side (1/3 width) */}
-          <div className="xl:col-span-1">
+          {/* Calendar Widget and AI Features - Right Side (1/3 width) */}
+          <div className="xl:col-span-1 space-y-6">
             <CalendarWidget 
               actionItems={filteredActionItems}
               onScheduleItem={handleScheduleItem}
             />
+            
+            {/* AI Features Section */}
+            <AITabs />
           </div>
         </div>
       </div>

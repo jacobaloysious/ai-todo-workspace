@@ -66,8 +66,8 @@ export const AITabs = () => {
 
   return (
     <div className="space-y-4">
-      {/* Tab Headers */}
-      <div className="flex flex-col sm:flex-row gap-2">
+      {/* Tab Headers - Stacked for narrow width */}
+      <div className="flex flex-col gap-2">
         {tabs.map((tab) => {
           const IconComponent = tab.icon;
           const isActive = activeTab === tab.id;
@@ -76,7 +76,7 @@ export const AITabs = () => {
             <Button
               key={tab.id}
               variant={isActive ? "default" : "outline"}
-              className={`flex-1 h-auto p-4 justify-start text-left transition-all ${
+              className={`w-full h-auto p-3 justify-start text-left transition-all ${
                 isActive 
                   ? 'bg-gradient-ai text-white shadow-elevated' 
                   : 'hover:bg-muted/50'
@@ -84,7 +84,7 @@ export const AITabs = () => {
               onClick={() => setActiveTab(tab.id as any)}
             >
               <div className="flex items-center gap-3 w-full">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
                   isActive 
                     ? 'bg-white/20 text-white' 
                     : 'bg-gradient-ai/10 text-ai-primary'
