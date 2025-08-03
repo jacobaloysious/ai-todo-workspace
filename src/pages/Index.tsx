@@ -595,20 +595,85 @@ const Index = () => {
   const currentTodos = user ? manualTodos : localTodos;
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      <div className="container mx-auto px-4 py-4">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Brain className="w-8 h-8 text-ai-primary" />
-            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent">
-              AI ToDos
-            </h1>
+    <div className="min-h-screen bg-gradient-subtle font-body">
+      {/* Meta-style Header */}
+      <div className="sticky top-0 z-50 backdrop-blur-lg bg-background/95 border-b border-border/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-8">
+              <div>
+                <h1 className="text-xl font-bold bg-gradient-meta bg-clip-text text-transparent font-meta">
+                  Smart Task Hub
+                </h1>
+              </div>
+              
+              {/* Meta-style navigation */}
+              <div className="hidden md:flex items-center gap-6 text-sm font-medium">
+                <span className="text-foreground cursor-pointer hover:text-primary transition-colors">Tasks</span>
+                <span className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors">AI insights</span>
+                <span className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Calendar</span>
+                <span className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Analytics</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                    {user.email}
+                  </Badge>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => supabase.auth.signOut()}
+                    className="hover:bg-muted/50"
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  onClick={() => window.open('/auth', '_self')}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg"
+                >
+                  Sign In
+                </Button>
+              )}
+            </div>
           </div>
-          <p className="text-lg text-muted-foreground font-normal">
-            Experience intelligent task management with AI-powered insights, smart categorization, and natural language processing.
-          </p>
         </div>
+      </div>
+
+      {/* Hero Section - Meta style */}
+      <div className="bg-gradient-meta">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <h1 className="text-5xl font-bold text-white mb-4 font-meta">
+            Welcome to Smart Task Hub
+          </h1>
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            How can we help you be more productive?
+          </p>
+          
+          {/* Search bar - Meta style */}
+          <div className="max-w-2xl mx-auto mb-8">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search tasks, create todos, or ask AI for help..."
+                className="w-full px-6 py-4 text-lg rounded-2xl bg-white/90 backdrop-blur-sm border-0 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-gray-500"
+              />
+              <Button 
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/90 rounded-xl"
+                size="sm"
+              >
+                Search
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
 
 
         {/* Summary Stats */}

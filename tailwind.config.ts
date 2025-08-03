@@ -70,9 +70,13 @@ export default {
 				}
 			},
 			backgroundImage: {
-				'gradient-ai': 'var(--gradient-ai)',
+				'gradient-meta': 'var(--gradient-meta)',
 				'gradient-subtle': 'var(--gradient-subtle)',
 				'gradient-card': 'var(--gradient-card)'
+			},
+			fontFamily: {
+				'meta': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+				'body': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
 			},
 			boxShadow: {
 				'glass': 'var(--shadow-glass)',
