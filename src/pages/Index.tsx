@@ -4,12 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AIWorkloadAnalysis } from '@/components/AIWorkloadAnalysis';
 import { AISmartFilters } from '@/components/AISmartFilters';
 import { AIActionSuggestions } from '@/components/AIActionSuggestions';
 import { AITabs } from '@/components/AITabs';
 import { ChatInterface } from '@/components/ChatInterface';
 import { CalendarWidget } from '@/components/CalendarWidget';
+import ManualTodoInput, { ManualTodo } from '@/components/ManualTodoInput';
+import ManualTodoCard from '@/components/ManualTodoCard';
 import { 
   FileText, 
   Bug, 
@@ -47,6 +50,7 @@ interface ActionItem {
 
 const Index = () => {
   const [selectedSource, setSelectedSource] = useState<string>('all');
+  const [manualTodos, setManualTodos] = useState<ManualTodo[]>([]);
   // Mock data for demonstration with AI enhancements
   const actionItems: ActionItem[] = [
     // Approvals (Concur) items first
@@ -268,6 +272,32 @@ const Index = () => {
     // Here you would implement the actual scheduling logic
   };
 
+  // Manual todo functions
+  const handleAddTodo = (todoData: Omit<ManualTodo, 'id' | 'createdAt'>) => {
+    const newTodo: ManualTodo = {
+      ...todoData,
+      id: Date.now().toString(),
+      createdAt: new Date(),
+    };
+    setManualTodos([newTodo, ...manualTodos]);
+  };
+
+  const handleToggleTodoComplete = (id: string) => {
+    setManualTodos(manualTodos.map(todo =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  const handleEditTodo = (id: string, updates: Partial<ManualTodo>) => {
+    setManualTodos(manualTodos.map(todo =>
+      todo.id === id ? { ...todo, ...updates } : todo
+    ));
+  };
+
+  const handleDeleteTodo = (id: string) => {
+    setManualTodos(manualTodos.filter(todo => todo.id !== id));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <div className="container mx-auto px-4 py-4">
@@ -359,168 +389,205 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Main Content: Action Items + Calendar */}
+        {/* Main Content: Tabs for External Tasks and Manual Todos */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Action Items - Left Side (2/3 width) */}
-          <div className="xl:col-span-2 space-y-4">
-            {Object.entries(filteredGroupedItems).length === 0 ? (
-              <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
-                <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/20 flex items-center justify-center">
-                  <AlertCircle className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-1">No items found</h3>
-                <p className="text-sm text-muted-foreground">
-                  No action items found for the selected filter.
-                </p>
-              </Card>
-            ) : (
-              Object.entries(filteredGroupedItems).map(([source, items]) => (
-            <div key={source}>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex items-center gap-1">
-                  {getSourceIcon(source)}
-                  <h2 className="text-xl font-semibold text-foreground">
-                    {getSourceName(source)}
-                  </h2>
-                </div>
-                <Badge className={getSourceColor(source)}>
-                  {items.length} item{items.length !== 1 ? 's' : ''}
-                </Badge>
-              </div>
+          {/* Tasks Content - Left Side (2/3 width) */}
+          <div className="xl:col-span-2">
+            <Tabs defaultValue="external" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="external">External Tasks</TabsTrigger>
+                <TabsTrigger value="manual">My Todos ({manualTodos.length})</TabsTrigger>
+              </TabsList>
               
-              <div className="grid gap-3">
-                {items.map((item) => (
-                  <Card 
-                    key={item.id}
-                    className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass hover:shadow-elevated transition-spring hover:scale-[1.01]"
-                  >
-                    <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-                      <div className="flex-1 space-y-3">
-                        <div className="flex flex-wrap items-center gap-1">
-                          <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
-                          <Badge className={getPriorityColor(item.priority)}>
-                            {item.priority}
-                          </Badge>
-                          {item.aiScore && (
-                            <Badge variant="outline" className="border-ai-primary/30 text-ai-primary">
-                              <Brain className="w-3 h-3 mr-1" />
-                              AI Score: {item.aiScore}
-                            </Badge>
-                          )}
-                          {item.estimatedTime && (
-                            <Badge variant="outline" className="border-muted text-muted-foreground">
-                              <Clock className="w-3 h-3 mr-1" />
-                              {item.estimatedTime}
-                            </Badge>
-                          )}
-                          {item.dueDate && (
-                            <Badge variant="outline" className="border-ai-accent/30 text-ai-accent">
-                              <Calendar className="w-3 h-3 mr-1" />
-                              Due {new Date(item.dueDate).toLocaleDateString()}
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {item.description}
-                        </p>
-                        
-                        {item.aiSuggestion && (
-                          <div className="p-2 rounded-lg bg-gradient-ai/5 border border-ai-primary/20">
-                            <div className="flex items-start gap-1">
-                              <Zap className="w-3 h-3 text-ai-primary mt-0.5 flex-shrink-0" />
-                              <div>
-                                <p className="text-xs font-medium text-ai-primary mb-0.5">AI Suggestion</p>
-                                <p className="text-xs text-muted-foreground">{item.aiSuggestion}</p>
+              <TabsContent value="external" className="space-y-4">
+                {Object.entries(filteredGroupedItems).length === 0 ? (
+                  <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/20 flex items-center justify-center">
+                      <AlertCircle className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">No items found</h3>
+                    <p className="text-sm text-muted-foreground">
+                      No action items found for the selected filter.
+                    </p>
+                  </Card>
+                ) : (
+                  Object.entries(filteredGroupedItems).map(([source, items]) => (
+                <div key={source}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-1">
+                      {getSourceIcon(source)}
+                      <h2 className="text-xl font-semibold text-foreground">
+                        {getSourceName(source)}
+                      </h2>
+                    </div>
+                    <Badge className={getSourceColor(source)}>
+                      {items.length} item{items.length !== 1 ? 's' : ''}
+                    </Badge>
+                  </div>
+                  
+                  <div className="grid gap-3">
+                    {items.map((item) => (
+                      <Card 
+                        key={item.id}
+                        className="p-4 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass hover:shadow-elevated transition-spring hover:scale-[1.01]"
+                      >
+                        <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                          <div className="flex-1 space-y-3">
+                            <div className="flex flex-wrap items-center gap-1">
+                              <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
+                              <Badge className={getPriorityColor(item.priority)}>
+                                {item.priority}
+                              </Badge>
+                              {item.aiScore && (
+                                <Badge variant="outline" className="border-ai-primary/30 text-ai-primary">
+                                  <Brain className="w-3 h-3 mr-1" />
+                                  AI Score: {item.aiScore}
+                                </Badge>
+                              )}
+                              {item.estimatedTime && (
+                                <Badge variant="outline" className="border-muted text-muted-foreground">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  {item.estimatedTime}
+                                </Badge>
+                              )}
+                              {item.dueDate && (
+                                <Badge variant="outline" className="border-ai-accent/30 text-ai-accent">
+                                  <Calendar className="w-3 h-3 mr-1" />
+                                  Due {new Date(item.dueDate).toLocaleDateString()}
+                                </Badge>
+                              )}
+                            </div>
+                            
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {item.description}
+                            </p>
+                            
+                            {item.aiSuggestion && (
+                              <div className="p-2 rounded-lg bg-gradient-ai/5 border border-ai-primary/20">
+                                <div className="flex items-start gap-1">
+                                  <Zap className="w-3 h-3 text-ai-primary mt-0.5 flex-shrink-0" />
+                                  <div>
+                                    <p className="text-xs font-medium text-ai-primary mb-0.5">AI Suggestion</p>
+                                    <p className="text-xs text-muted-foreground">{item.aiSuggestion}</p>
+                                  </div>
+                                </div>
                               </div>
+                            )}
+                            
+                            {item.dependencies && item.dependencies.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                <span className="text-xs text-muted-foreground mr-2">Dependencies:</span>
+                                {item.dependencies.map((dep, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs">
+                                    {dep}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                            
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground pt-2 border-t border-border">
+                              <span>By {item.assignedBy}</span>
+                              <span>•</span>
+                              <span>{new Date(item.created).toLocaleDateString()}</span>
                             </div>
                           </div>
-                        )}
-                        
-                        {item.dependencies && item.dependencies.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            <span className="text-xs text-muted-foreground mr-2">Dependencies:</span>
-                            {item.dependencies.map((dep, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {dep}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                        
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground pt-2 border-t border-border">
-                          <span>By {item.assignedBy}</span>
-                          <span>•</span>
-                          <span>{new Date(item.created).toLocaleDateString()}</span>
-                        </div>
-                      </div>
 
-                      {/* Action Required Section */}
-                      <div className="lg:w-64 space-y-3">
-                        <div>
-                          <p className="text-sm font-medium text-foreground mb-2">Action Required:</p>
-                          <p className="text-xs text-muted-foreground mb-3">{item.actionRequired}</p>
+                          {/* Action Required Section */}
+                          <div className="lg:w-64 space-y-3">
+                            <div>
+                              <p className="text-sm font-medium text-foreground mb-2">Action Required:</p>
+                              <p className="text-xs text-muted-foreground mb-3">{item.actionRequired}</p>
+                            </div>
+                            
+                            <Button 
+                              size="sm" 
+                              onClick={() => window.open(item.link, '_blank')}
+                              className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
+                            >
+                              <ExternalLink className="w-3 h-3 mr-2" />
+                              Open in {getSourceName(item.source)}
+                            </Button>
+                            
+                            <div className="flex gap-2">
+                              {item.source === 'concur' && (
+                                <>
+                                  <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                    Approve
+                                  </Button>
+                                  <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                    Reject
+                                  </Button>
+                                </>
+                              )}
+                              {item.source === 'interviewing' && item.type === 'Interview Feedback' && (
+                                <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                  Submit Feedback
+                                </Button>
+                              )}
+                              {item.source === 'interviewing' && item.type === 'Interview Invitation' && (
+                                <>
+                                  <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                    Accept
+                                  </Button>
+                                  <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                    Decline
+                                  </Button>
+                                </>
+                              )}
+                              {item.source === 'google-docs' && (
+                                <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                  Add Comment
+                                </Button>
+                              )}
+                              {item.source === 'jira' && (
+                                <Button size="sm" variant="outline" className="flex-1 text-xs">
+                                  Update Status
+                                </Button>
+                              )}
+                            </div>
+                            
+                            <Button size="sm" variant="ghost" className="w-full text-xs">
+                              <Calendar className="w-3 h-3 mr-2" />
+                              Schedule
+                            </Button>
+                          </div>
                         </div>
-                        
-                        <Button 
-                          size="sm" 
-                          onClick={() => window.open(item.link, '_blank')}
-                          className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
-                        >
-                          <ExternalLink className="w-3 h-3 mr-2" />
-                          Open in {getSourceName(item.source)}
-                        </Button>
-                        
-                        <div className="flex gap-2">
-                          {item.source === 'concur' && (
-                            <>
-                              <Button size="sm" variant="outline" className="flex-1 text-xs">
-                                Approve
-                              </Button>
-                              <Button size="sm" variant="outline" className="flex-1 text-xs">
-                                Reject
-                              </Button>
-                            </>
-                          )}
-                          {item.source === 'interviewing' && item.type === 'Interview Feedback' && (
-                            <Button size="sm" variant="outline" className="flex-1 text-xs">
-                              Submit Feedback
-                            </Button>
-                          )}
-                          {item.source === 'interviewing' && item.type === 'Interview Invitation' && (
-                            <>
-                              <Button size="sm" variant="outline" className="flex-1 text-xs">
-                                Accept
-                              </Button>
-                              <Button size="sm" variant="outline" className="flex-1 text-xs">
-                                Decline
-                              </Button>
-                            </>
-                          )}
-                          {item.source === 'google-docs' && (
-                            <Button size="sm" variant="outline" className="flex-1 text-xs">
-                              Add Comment
-                            </Button>
-                          )}
-                          {item.source === 'jira' && (
-                            <Button size="sm" variant="outline" className="flex-1 text-xs">
-                              Update Status
-                            </Button>
-                          )}
-                        </div>
-                        
-                        <Button size="sm" variant="ghost" className="w-full text-xs">
-                          <Calendar className="w-3 h-3 mr-2" />
-                          Schedule
-                        </Button>
-                      </div>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+                  ))
+                )}
+              </TabsContent>
+              
+              <TabsContent value="manual" className="space-y-4">
+                <ManualTodoInput onAddTodo={handleAddTodo} />
+                
+                {manualTodos.length === 0 ? (
+                  <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/20 flex items-center justify-center">
+                      <CheckCircle2 className="w-8 h-8 text-muted-foreground" />
                     </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">No todos yet</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Create your first todo using the form above.
+                    </p>
                   </Card>
-                ))}
-              </div>
-            </div>
-              ))
-            )}
+                ) : (
+                  <div className="space-y-3">
+                    {manualTodos.map((todo) => (
+                      <ManualTodoCard
+                        key={todo.id}
+                        todo={todo}
+                        onToggleComplete={handleToggleTodoComplete}
+                        onEdit={handleEditTodo}
+                        onDelete={handleDeleteTodo}
+                      />
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* Calendar Widget - Right Side (1/3 width) */}
