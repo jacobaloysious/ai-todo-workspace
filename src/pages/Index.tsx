@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -13,6 +13,8 @@ import { ChatInterface } from '@/components/ChatInterface';
 import { CalendarWidget } from '@/components/CalendarWidget';
 import ManualTodoInput, { ManualTodo } from '@/components/ManualTodoInput';
 import ManualTodoCard from '@/components/ManualTodoCard';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import { 
   FileText, 
   Bug, 
@@ -51,6 +53,66 @@ interface ActionItem {
 const Index = () => {
   const [selectedSource, setSelectedSource] = useState<string>('all');
   const [manualTodos, setManualTodos] = useState<ManualTodo[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  // Load user session and todos on mount
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      setLoading(false);
+      
+      if (session?.user) {
+        loadTodos();
+      }
+    };
+
+    initializeAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          loadTodos();
+        } else {
+          setManualTodos([]);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const loadTodos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('todos')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const formattedTodos: ManualTodo[] = data.map(todo => ({
+        id: todo.id,
+        title: todo.title,
+        description: todo.description || '',
+        completed: todo.completed,
+        scheduledDate: todo.scheduled_date ? new Date(todo.scheduled_date) : undefined,
+        createdAt: new Date(todo.created_at)
+      }));
+
+      setManualTodos(formattedTodos);
+    } catch (error: any) {
+      console.error('Error loading todos:', error);
+      toast({
+        title: "Error loading todos",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
   // Mock data for demonstration with AI enhancements
   const actionItems: ActionItem[] = [
     // Approvals (Concur) items first
@@ -272,30 +334,142 @@ const Index = () => {
     // Here you would implement the actual scheduling logic
   };
 
-  // Manual todo functions
-  const handleAddTodo = (todoData: Omit<ManualTodo, 'id' | 'createdAt'>) => {
-    const newTodo: ManualTodo = {
-      ...todoData,
-      id: Date.now().toString(),
-      createdAt: new Date(),
-    };
-    setManualTodos([newTodo, ...manualTodos]);
+  // Manual todo functions with Supabase
+  const handleAddTodo = async (todoData: Omit<ManualTodo, 'id' | 'createdAt'>) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to create todos",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('todos')
+        .insert([{
+          user_id: user.id,
+          title: todoData.title,
+          description: todoData.description,
+          scheduled_date: todoData.scheduledDate?.toISOString(),
+          completed: false
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newTodo: ManualTodo = {
+        id: data.id,
+        title: data.title,
+        description: data.description || '',
+        completed: data.completed,
+        scheduledDate: data.scheduled_date ? new Date(data.scheduled_date) : undefined,
+        createdAt: new Date(data.created_at)
+      };
+
+      setManualTodos([newTodo, ...manualTodos]);
+      
+      toast({
+        title: "Todo created",
+        description: "Your todo has been saved successfully"
+      });
+    } catch (error: any) {
+      console.error('Error creating todo:', error);
+      toast({
+        title: "Error creating todo",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleToggleTodoComplete = (id: string) => {
-    setManualTodos(manualTodos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+  const handleToggleTodoComplete = async (id: string) => {
+    if (!user) return;
+
+    try {
+      const todo = manualTodos.find(t => t.id === id);
+      if (!todo) return;
+
+      const { error } = await supabase
+        .from('todos')
+        .update({ completed: !todo.completed })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setManualTodos(manualTodos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      ));
+    } catch (error: any) {
+      console.error('Error updating todo:', error);
+      toast({
+        title: "Error updating todo",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleEditTodo = (id: string, updates: Partial<ManualTodo>) => {
-    setManualTodos(manualTodos.map(todo =>
-      todo.id === id ? { ...todo, ...updates } : todo
-    ));
+  const handleEditTodo = async (id: string, updates: Partial<ManualTodo>) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('todos')
+        .update({
+          title: updates.title,
+          description: updates.description,
+          scheduled_date: updates.scheduledDate?.toISOString()
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setManualTodos(manualTodos.map(todo =>
+        todo.id === id ? { ...todo, ...updates } : todo
+      ));
+
+      toast({
+        title: "Todo updated",
+        description: "Your changes have been saved"
+      });
+    } catch (error: any) {
+      console.error('Error updating todo:', error);
+      toast({
+        title: "Error updating todo",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleDeleteTodo = (id: string) => {
-    setManualTodos(manualTodos.filter(todo => todo.id !== id));
+  const handleDeleteTodo = async (id: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('todos')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setManualTodos(manualTodos.filter(todo => todo.id !== id));
+      
+      toast({
+        title: "Todo deleted",
+        description: "Todo has been removed successfully"
+      });
+    } catch (error: any) {
+      console.error('Error deleting todo:', error);
+      toast({
+        title: "Error deleting todo",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -557,30 +731,47 @@ const Index = () => {
               </TabsContent>
               
               <TabsContent value="manual" className="space-y-4">
-                <ManualTodoInput onAddTodo={handleAddTodo} />
-                
-                {manualTodos.length === 0 ? (
+                {!user ? (
                   <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
-                    <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/20 flex items-center justify-center">
-                      <CheckCircle2 className="w-8 h-8 text-muted-foreground" />
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-ai/10 flex items-center justify-center">
+                      <Brain className="w-8 h-8 text-ai-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-1">No todos yet</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Create your first todo using the form above.
+                    <h3 className="text-lg font-semibold text-foreground mb-1">Sign in to manage your todos</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Create an account or sign in to save and sync your personal todos across devices.
                     </p>
+                    <Button onClick={() => window.open('/auth', '_self')} className="bg-gradient-ai hover:opacity-90">
+                      Sign In / Create Account
+                    </Button>
                   </Card>
                 ) : (
-                  <div className="space-y-3">
-                    {manualTodos.map((todo) => (
-                      <ManualTodoCard
-                        key={todo.id}
-                        todo={todo}
-                        onToggleComplete={handleToggleTodoComplete}
-                        onEdit={handleEditTodo}
-                        onDelete={handleDeleteTodo}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    <ManualTodoInput onAddTodo={handleAddTodo} />
+                    
+                    {manualTodos.length === 0 ? (
+                      <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
+                        <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/20 flex items-center justify-center">
+                          <CheckCircle2 className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-foreground mb-1">No todos yet</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Create your first todo using the form above.
+                        </p>
+                      </Card>
+                    ) : (
+                      <div className="space-y-3">
+                        {manualTodos.map((todo) => (
+                          <ManualTodoCard
+                            key={todo.id}
+                            todo={todo}
+                            onToggleComplete={handleToggleTodoComplete}
+                            onEdit={handleEditTodo}
+                            onDelete={handleDeleteTodo}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </TabsContent>
             </Tabs>
