@@ -72,7 +72,8 @@ export default {
 			backgroundImage: {
 				'gradient-meta': 'var(--gradient-meta)',
 				'gradient-subtle': 'var(--gradient-subtle)',
-				'gradient-card': 'var(--gradient-card)'
+				'gradient-card': 'var(--gradient-card)',
+				'gradient-ai': 'var(--gradient-ai)'
 			},
 			fontFamily: {
 				'meta': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],

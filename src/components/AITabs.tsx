@@ -65,7 +65,7 @@ export const AITabs = () => {
               className={`w-full h-auto p-3 justify-start text-left transition-all ${
                 isActive 
                   ? 'bg-gradient-ai text-white shadow-elevated' 
-                  : 'hover:bg-muted/50'
+                  : 'hover:bg-muted/50 text-foreground border-border'
               }`}
               onClick={() => setActiveTab(tab.id as any)}
             >
@@ -73,7 +73,7 @@ export const AITabs = () => {
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
                   isActive 
                     ? 'bg-white/20 text-white' 
-                    : 'bg-gradient-ai/10 text-ai-primary'
+                    : 'bg-primary/10 text-primary'
                 }`}>
                   <IconComponent className="w-4 h-4" />
                 </div>

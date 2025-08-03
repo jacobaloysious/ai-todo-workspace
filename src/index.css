@@ -49,6 +49,12 @@ All colors MUST be HSL.
     --gradient-meta: linear-gradient(135deg, hsl(var(--meta-purple)), hsl(var(--meta-blue)), hsl(var(--meta-pink)));
     --gradient-subtle: linear-gradient(180deg, hsl(280 50% 98%), hsl(220 60% 97%));
     --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+    --gradient-ai: linear-gradient(135deg, hsl(var(--meta-purple)), hsl(var(--meta-blue)));
+    
+    /* AI colors */
+    --ai-primary: 280 80% 60%;
+    --ai-secondary: 220 100% 60%;
+    --ai-accent: 320 80% 70%;
     
     /* Meta-style shadows */
     --shadow-glass: 0 8px 32px 0 rgba(130, 130, 250, 0.1);
