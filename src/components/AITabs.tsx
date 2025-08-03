@@ -3,16 +3,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AIWorkloadAnalysisContent } from './AIWorkloadAnalysisContent';
-import { AISmartFiltersContent } from './AISmartFiltersContent';
 import { AIActionSuggestionsContent } from './AIActionSuggestionsContent';
 import { 
   Brain, 
-  Sparkles, 
   Lightbulb
 } from 'lucide-react';
 
 export const AITabs = () => {
-  const [activeTab, setActiveTab] = useState<'workload' | 'filters' | 'suggestions'>('workload');
+  const [activeTab, setActiveTab] = useState<'workload' | 'suggestions'>('workload');
 
   const tabs = [
     {
@@ -20,12 +18,6 @@ export const AITabs = () => {
       name: 'AI Workload Analysis',
       icon: Brain,
       description: 'Capacity planning'
-    },
-    {
-      id: 'filters',
-      name: 'AI Smart Filters',
-      icon: Sparkles,
-      description: 'Task categorization'
     },
     {
       id: 'suggestions',
@@ -41,12 +33,6 @@ export const AITabs = () => {
         return (
           <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
             <AIWorkloadAnalysisContent />
-          </Card>
-        );
-      case 'filters':
-        return (
-          <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass">
-            <AISmartFiltersContent />
           </Card>
         );
       case 'suggestions':
