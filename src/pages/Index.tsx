@@ -53,11 +53,36 @@ interface ActionItem {
 const Index = () => {
   const [selectedSource, setSelectedSource] = useState<string>('all');
   const [manualTodos, setManualTodos] = useState<ManualTodo[]>([]);
+  const [localTodos, setLocalTodos] = useState<ManualTodo[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Load user session and todos on mount
+  // Load local todos from localStorage
+  useEffect(() => {
+    const savedLocalTodos = localStorage.getItem('guest-todos');
+    if (savedLocalTodos) {
+      try {
+        const parsed = JSON.parse(savedLocalTodos);
+        const formattedTodos = parsed.map((todo: any) => ({
+          ...todo,
+          createdAt: new Date(todo.createdAt),
+          scheduledDate: todo.scheduledDate ? new Date(todo.scheduledDate) : undefined
+        }));
+        setLocalTodos(formattedTodos);
+      } catch (error) {
+        console.error('Error parsing local todos:', error);
+      }
+    }
+  }, []);
+
+  // Save local todos to localStorage
+  const saveLocalTodos = (todos: ManualTodo[]) => {
+    localStorage.setItem('guest-todos', JSON.stringify(todos));
+    setLocalTodos(todos);
+  };
+
+  // Load user session and database todos on mount
   useEffect(() => {
     const initializeAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -65,7 +90,11 @@ const Index = () => {
       setLoading(false);
       
       if (session?.user) {
-        loadTodos();
+        await loadDatabaseTodos();
+        // Offer to sync local todos if any exist
+        if (localTodos.length > 0) {
+          offerToSyncLocalTodos();
+        }
       }
     };
 
@@ -75,7 +104,11 @@ const Index = () => {
       (event, session) => {
         setUser(session?.user ?? null);
         if (session?.user) {
-          loadTodos();
+          loadDatabaseTodos();
+          // Offer to sync local todos when user signs in
+          if (localTodos.length > 0) {
+            setTimeout(() => offerToSyncLocalTodos(), 1000);
+          }
         } else {
           setManualTodos([]);
         }
@@ -83,9 +116,9 @@ const Index = () => {
     );
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [localTodos]);
 
-  const loadTodos = async () => {
+  const loadDatabaseTodos = async () => {
     try {
       const { data, error } = await supabase
         .from('todos')
@@ -108,6 +141,61 @@ const Index = () => {
       console.error('Error loading todos:', error);
       toast({
         title: "Error loading todos",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const offerToSyncLocalTodos = () => {
+    toast({
+      title: "Sync your local todos?",
+      description: `You have ${localTodos.length} local todos. Would you like to sync them to your account?`,
+      action: (
+        <Button 
+          size="sm" 
+          onClick={syncLocalTodos}
+          className="bg-gradient-ai hover:opacity-90"
+        >
+          Sync Now
+        </Button>
+      ),
+    });
+  };
+
+  const syncLocalTodos = async () => {
+    if (!user || localTodos.length === 0) return;
+
+    try {
+      const todosToSync = localTodos.map(todo => ({
+        user_id: user.id,
+        title: todo.title,
+        description: todo.description,
+        scheduled_date: todo.scheduledDate?.toISOString(),
+        completed: todo.completed
+      }));
+
+      const { error } = await supabase
+        .from('todos')
+        .insert(todosToSync);
+
+      if (error) throw error;
+
+      // Clear local todos after successful sync
+      localStorage.removeItem('guest-todos');
+      setLocalTodos([]);
+      
+      // Reload database todos
+      await loadDatabaseTodos();
+      
+      toast({
+        title: "Todos synced successfully!",
+        description: `${todosToSync.length} todos have been synced to your account.`
+      });
+    } catch (error: any) {
+      console.error('Error syncing todos:', error);
+      toast({
+        title: "Error syncing todos",
         description: error.message,
         variant: "destructive"
       });
@@ -334,17 +422,26 @@ const Index = () => {
     // Here you would implement the actual scheduling logic
   };
 
-  // Manual todo functions with Supabase
+  // Todo functions supporting both guest and authenticated modes
   const handleAddTodo = async (todoData: Omit<ManualTodo, 'id' | 'createdAt'>) => {
     if (!user) {
+      // Guest mode - save locally
+      const newTodo: ManualTodo = {
+        ...todoData,
+        id: Date.now().toString(),
+        createdAt: new Date(),
+      };
+      const updatedLocalTodos = [newTodo, ...localTodos];
+      saveLocalTodos(updatedLocalTodos);
+      
       toast({
-        title: "Authentication required",
-        description: "Please sign in to create todos",
-        variant: "destructive"
+        title: "Todo created locally",
+        description: "Sign in to sync across devices"
       });
       return;
     }
 
+    // Authenticated mode - save to database
     try {
       const { data, error } = await supabase
         .from('todos')
@@ -386,8 +483,16 @@ const Index = () => {
   };
 
   const handleToggleTodoComplete = async (id: string) => {
-    if (!user) return;
+    if (!user) {
+      // Guest mode - update locally
+      const updatedLocalTodos = localTodos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      );
+      saveLocalTodos(updatedLocalTodos);
+      return;
+    }
 
+    // Authenticated mode - update database
     try {
       const todo = manualTodos.find(t => t.id === id);
       if (!todo) return;
@@ -413,8 +518,16 @@ const Index = () => {
   };
 
   const handleEditTodo = async (id: string, updates: Partial<ManualTodo>) => {
-    if (!user) return;
+    if (!user) {
+      // Guest mode - update locally
+      const updatedLocalTodos = localTodos.map(todo =>
+        todo.id === id ? { ...todo, ...updates } : todo
+      );
+      saveLocalTodos(updatedLocalTodos);
+      return;
+    }
 
+    // Authenticated mode - update database
     try {
       const { error } = await supabase
         .from('todos')
@@ -446,8 +559,14 @@ const Index = () => {
   };
 
   const handleDeleteTodo = async (id: string) => {
-    if (!user) return;
+    if (!user) {
+      // Guest mode - delete locally
+      const updatedLocalTodos = localTodos.filter(todo => todo.id !== id);
+      saveLocalTodos(updatedLocalTodos);
+      return;
+    }
 
+    // Authenticated mode - delete from database
     try {
       const { error } = await supabase
         .from('todos')
@@ -471,6 +590,9 @@ const Index = () => {
       });
     }
   };
+
+  // Get current todos based on authentication state
+  const currentTodos = user ? manualTodos : localTodos;
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -566,7 +688,7 @@ const Index = () => {
             <Tabs defaultValue="external" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="external">External Tasks</TabsTrigger>
-                <TabsTrigger value="manual">My Todos ({manualTodos.length})</TabsTrigger>
+                <TabsTrigger value="manual">My Todos ({currentTodos.length})</TabsTrigger>
               </TabsList>
               
               <TabsContent value="external" className="space-y-4">
@@ -731,46 +853,64 @@ const Index = () => {
               </TabsContent>
               
               <TabsContent value="manual" className="space-y-4">
-                {!user ? (
+                <ManualTodoInput onAddTodo={handleAddTodo} />
+                
+                {!user && currentTodos.length === 0 ? (
                   <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
                     <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-ai/10 flex items-center justify-center">
                       <Brain className="w-8 h-8 text-ai-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-1">Sign in to manage your todos</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">Start creating todos!</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Create an account or sign in to save and sync your personal todos across devices.
+                      Your todos are saved locally. Sign in to sync across devices.
                     </p>
-                    <Button onClick={() => window.open('/auth', '_self')} className="bg-gradient-ai hover:opacity-90">
-                      Sign In / Create Account
+                    <Button onClick={() => window.open('/auth', '_self')} variant="outline" className="border-ai-primary/30 text-ai-primary hover:bg-ai-primary/10">
+                      Sign In to Sync
                     </Button>
+                  </Card>
+                ) : currentTodos.length === 0 ? (
+                  <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/20 flex items-center justify-center">
+                      <CheckCircle2 className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">No todos yet</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Create your first todo using the form above.
+                    </p>
                   </Card>
                 ) : (
                   <>
-                    <ManualTodoInput onAddTodo={handleAddTodo} />
-                    
-                    {manualTodos.length === 0 ? (
-                      <Card className="p-6 bg-gradient-card backdrop-blur-sm border border-white/20 shadow-glass text-center">
-                        <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted/20 flex items-center justify-center">
-                          <CheckCircle2 className="w-8 h-8 text-muted-foreground" />
+                    {!user && currentTodos.length > 0 && (
+                      <Card className="p-4 bg-gradient-card backdrop-blur-sm border border-ai-primary/20 shadow-glass">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Brain className="w-5 h-5 text-ai-primary" />
+                            <div>
+                              <p className="text-sm font-medium text-foreground">Guest Mode</p>
+                              <p className="text-xs text-muted-foreground">Sign in to sync your todos across devices</p>
+                            </div>
+                          </div>
+                          <Button 
+                            size="sm" 
+                            onClick={() => window.open('/auth', '_self')}
+                            className="bg-gradient-ai hover:opacity-90"
+                          >
+                            Sign In
+                          </Button>
                         </div>
-                        <h3 className="text-lg font-semibold text-foreground mb-1">No todos yet</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Create your first todo using the form above.
-                        </p>
                       </Card>
-                    ) : (
-                      <div className="space-y-3">
-                        {manualTodos.map((todo) => (
-                          <ManualTodoCard
-                            key={todo.id}
-                            todo={todo}
-                            onToggleComplete={handleToggleTodoComplete}
-                            onEdit={handleEditTodo}
-                            onDelete={handleDeleteTodo}
-                          />
-                        ))}
-                      </div>
                     )}
+                    <div className="space-y-3">
+                      {currentTodos.map((todo) => (
+                        <ManualTodoCard
+                          key={todo.id}
+                          todo={todo}
+                          onToggleComplete={handleToggleTodoComplete}
+                          onEdit={handleEditTodo}
+                          onDelete={handleDeleteTodo}
+                        />
+                      ))}
+                    </div>
                   </>
                 )}
               </TabsContent>
