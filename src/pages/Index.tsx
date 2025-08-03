@@ -272,14 +272,14 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <div className="container mx-auto px-4 py-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2">
-            <Brain className="w-6 h-6 text-ai-primary" />
-            <h1 className="text-3xl font-bold bg-gradient-ai bg-clip-text text-transparent">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Brain className="w-8 h-8 text-ai-primary" />
+            <h1 className="text-4xl font-bold bg-gradient-ai bg-clip-text text-transparent">
               AI ToDos
             </h1>
           </div>
-          <p className="text-lg font-medium text-muted-foreground flex-1">
+          <p className="text-lg text-muted-foreground font-normal">
             Experience intelligent task management with AI-powered insights, smart categorization, and natural language processing.
           </p>
         </div>
