@@ -737,7 +737,7 @@ const Index = () => {
           <div className="xl:col-span-2">
             <Tabs defaultValue="external" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="external">External Tasks</TabsTrigger>
+                <TabsTrigger value="external">Incoming Tasks</TabsTrigger>
                 <TabsTrigger value="manual">My Todos ({currentTodos.length})</TabsTrigger>
               </TabsList>
               
