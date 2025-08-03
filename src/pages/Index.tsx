@@ -644,34 +644,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Hero Section - Meta style */}
-      <div className="bg-gradient-meta">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <h1 className="text-5xl font-bold text-white mb-4 font-meta">
-            Welcome to Smart Task Hub
-          </h1>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            How can we help you be more productive?
-          </p>
-          
-          {/* Search bar - Meta style */}
-          <div className="max-w-2xl mx-auto mb-8">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search tasks, create todos, or ask AI for help..."
-                className="w-full px-6 py-4 text-lg rounded-2xl bg-white/90 backdrop-blur-sm border-0 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-gray-500"
-              />
-              <Button 
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/90 rounded-xl"
-                size="sm"
-              >
-                Search
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="container mx-auto px-4 py-8">
 
